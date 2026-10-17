@@ -1,7 +1,5 @@
 # Stories Coffee: The Hidden Profitability Problem
 
-**One story:** Stories is judging branches, products and promotions on numbers that can mislead management. Branch unit costs follow a fixed multiplier rule, discounts are not tested against their break-even, and staffing is not matched to a very stable demand curve. The main finding is the cost rule (§2); §3 and §4 support it.
-
 **EECE490 Stories Coffee Hackathon**
 
 **Team members:** Rudy Abedulhadi · Karen El Helayel · Jad Faddoul
@@ -11,7 +9,7 @@
 |---|---|---|---|---|
 | 1 | **Audit the branch cost rule before any pricing, menu or closure decision** | If avoidable purchase cost: up to $39k–$47k. If allocation: $0 cash, but corrected margins (§2) | Pattern: high. Recoverability: unknown (A1) | Finance explains "Unit Cost"; 4 weeks of invoices, desserts first |
 | 2 | **Pause blanket 15% discounts; approve promotions with the break-even rule** | ≈$0.7k at current pace; prevents bigger losses (§3) | Medium-high: +4% lift measured vs +29% needed; only 2 campaigns | Next promotion: one branch, two weeks, others as control |
-| 3 | **Pilot staffing to demand: Tuesday 20:00–23:00 up, Saturday down** | Not sized (no labour data); 07:00 illustration ≈$0.8k (§4) | Demand pattern: high. Understaffing: unproven | One-week queue and wait-time audit, then a 4-week shift pilot (§4c) |
+| 3 | **Pilot staffing to demand: Tuesday 20:00–23:00 up, Saturday down** | Not sized (no labour data); 07:00 illustration ≈$0.8k (§4) | Demand pattern: high. Understaffing: unproven | One-week queue and wait-time audit, then a 4-week shift pilot (§4b) |
 
 ## Conclusion
 In the data Stories provided, every product's price and unit cost is one base value times a branch factor. **Garden's factors contradict each other: a 5% price discount and a 43% cost premium on all 45 products.** Against the cheapest cost base (Uptown), Garden and Harbour carry **$19.5k of excess cost in six months** *(measured)*. That is 10.9% of chain gross profit; Garden's part alone is 37% of Garden's gross profit. Whether any cash is recoverable is **unknown**. If it is an avoidable purchase cost, it is worth up to $39k–$47k a year *(estimate)*. If it is an accounting allocation, it is worth $0 in cash, but Garden's product margins are then wrong, and decisions built on them (cutting desserts, repricing, closing hours) would be wrong too. **First action: have finance explain the rule before anyone acts on branch margins.**
@@ -45,7 +43,7 @@ Stories' data team already knows how many lattes each branch sells. We looked fo
 
 **Scale cannot explain the costs.** Uptown is the smallest branch (39% of Harbour's transactions, `outputs/f4_branch_volume.csv`) yet has the cheapest unit costs. Harbour, the largest, pays 4% more. Volume discounts would produce the opposite order.
 
-**Why this is a costing rule, not waste.** Aggregated by month, the Garden/Harbour cost ratio is **1.4299–1.4301**. Per product it is 1.426–1.439, and the spread is exactly what rounding to the cent produces. For example, English Breakfast Tea costs $0.57 at Harbour, and $0.57 × 1.43 = $0.815, recorded as $0.82 (ratio 1.439). Item-by-item purchasing does not produce one constant multiplier across coffee beans, milk, croissants, sandwiches and bottled water for six months. That precision comes from a branch-wide rule applied to a base cost: a contract markup (which is still purchasing, but not item-by-item) or an overhead allocation. Each alternative was tested below. **Limit:** this is a property of the provided data. The brief describes it as real Stories data with replacement transaction IDs (all IDs carry a `SYN-` prefix). We cannot tell from the data whether the rule is a supplier contract, an accounting allocation, or a feature of how the extract was produced. Only Stories' finance team can verify the mechanism, which is why Decision 1 is an audit, not a saving.
+**Why this is a costing rule, not waste.** Aggregated by month, the Garden/Harbour cost ratio is **1.4299–1.4301**. Per product it is 1.426–1.439, and the spread is exactly what rounding to the cent produces. For example, English Breakfast Tea costs $0.57 at Harbour, and $0.57 × 1.43 = $0.815, recorded as $0.82 (ratio 1.439). Item-by-item purchasing does not produce one constant multiplier across coffee beans, milk, croissants, sandwiches and bottled water for six months. That precision comes from a branch-wide rule applied to a base cost: a contract markup (which is still purchasing, but not item-by-item) or an overhead allocation. Each alternative was tested below. Only Stories' finance team can verify the mechanism, which is why Decision 1 is an audit, not a saving.
 
 | Alternative explanation | Test | Result |
 |---|---|---|
@@ -142,7 +140,7 @@ Customers might shift branches rather than pay more. That is weak evidence: 94% 
 
 ![forecast](outputs/f3_forecast_and_heatmap.png)
 
-## 4c. Decision frameworks
+## 4b. Decision frameworks
 | | 1. Cost-rule audit | 2. Promotion rule | 3. Staffing pilot |
 |---|---|---|---|
 | **Benefit** | Up to $39k–$47k/yr if avoidable; otherwise correct margins | Stops discounts that need +29% lift but get about +4% | Shorter Tuesday-evening waits; fewer idle Saturday hours |
@@ -152,7 +150,7 @@ Customers might shift branches rather than pay more. That is weak evidence: 94% 
 | **Smallest test** | Compare invoice landed cost with recorded unit cost for 10 products | Two-week single-branch test with the others as control | Log arrivals, wait time and staff on shift for one week |
 | **Go / no-go** | Go if invoice cost tracks recorded cost (avoidable gap) | Go if measured lift > d/(m−d) and outside the placebo range | Go if Tuesday 20–23h wait > 5 min (*assumption*) while Saturday staff sit idle |
 
-## 4b. Approaches we considered and rejected
+## 4c. Approaches we considered and rejected
 Each idea would only be worth pursuing if the data showed a gap to close (`outputs/rejected_checks.csv`, `outputs/f4_tuesday_composition.csv`):
 
 | Idea | Measured | Why rejected |
@@ -200,7 +198,7 @@ python analysis/check_readme_numbers.py   # consistency test: README headline nu
 | `analysis/f2_promotions.py` | Promo facts, difference-in-differences vs control branches, campaign-shaped placebo, pre-trend, robustness, break-even |
 | `analysis/f3_demand_forecast.py` | Baselines vs Poisson GLM, June holdout, staffing simulation |
 | `analysis/f4_branch_levers.py` | Value context, cost benchmark, price harmonisation, Tuesday composition, opening hours, branch mix |
-| `analysis/rejected_checks.py` | Evidence for §4b |
+| `analysis/rejected_checks.py` | Evidence for §4c |
 | `analysis/check_readme_numbers.py` | Automated check that README headline numbers match the generated outputs |
 
 **Data quality** (`outputs/data_quality.csv`, *measured*): 51,177 lines and 33,887 transactions from 2026-01-01 to 2026-06-30. Revenue and gross profit reconcile on 100% of lines. No transaction has conflicting header fields. Each product has one price and one unit cost per branch for the whole period. 132 exact duplicate lines were removed. 36.5% of lines have no Customer ID.
