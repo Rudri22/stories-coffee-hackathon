@@ -1,0 +1,13 @@
+,value
+campaign_days,"2026-01-08, 2026-01-28, 2026-03-12, 2026-03-13, 2026-03-14, 2026-03-15, 2026-03-16, 2026-03-17, 2026-03-18, 2026-03-19, 2026-04-25, 2026-05-12, 2026-05-13, 2026-05-14, 2026-05-15, 2026-05-16, 2026-05-17, 2026-05-18, 2026-05-19"
+branch_days,57
+mean_txn_lift_pct,-0.0387
+share_branch_days_with_positive_lift,0.3509
+total_gp_lift_vs_control_usd,-1157.6338
+total_discount_given_on_campaign_days_usd,665.59
+placebo_mean_lift_pct,0.0052
+share_null_means_at_or_below_observed,0.025
+share_null_means_at_or_above_observed,0.975
+placebo_p5_pct,-0.2694
+placebo_p95_pct,0.3006
+total_discount_all_period_usd,2176.01

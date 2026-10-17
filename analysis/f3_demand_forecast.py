@@ -108,6 +108,10 @@ def main():
     monthly = p.assign(m=p.date.dt.strftime("%Y-%m")).groupby(["m", "branch"]).y.sum().unstack()[BRANCHES]
     monthly.to_csv(OUT / "f3_monthly_transactions.csv")
     test.to_csv(OUT / "f3_holdout_predictions.csv", index=False)
+    hour_share = (df.groupby("hour").size() / len(df)).round(4).rename("line_share")
+    hour_share.to_csv(OUT / "f3_hour_share_of_lines.csv")
+    growth = monthly.sum(axis=1)
+    print("peak hour share: %s; transactions Jun/Jan: %.3f" % (hour_share.idxmax(), growth.iloc[-1] / growth.iloc[0]))
 
     fig, ax = plt.subplots(1, 2, figsize=(12, 4))
     d = test.groupby("date")[["y", "baseline", "model"]].sum()

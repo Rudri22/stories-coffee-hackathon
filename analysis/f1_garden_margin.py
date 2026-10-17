@@ -105,6 +105,19 @@ def garden_products(df):
     return g.sort_values("gross_margin").round(4).reset_index()
 
 
+def category_mix(df):
+    """Share of lines and gross margin per category and branch (does Garden lean on low-margin categories?)."""
+    g = df.groupby(["category", "branch"]).agg(lines=("txn", "size"), revenue=("revenue", "sum"), gp=("gross_profit", "sum"))
+    g["line_share"] = g.lines / g.groupby("branch").lines.transform("sum")
+    g["gross_margin"] = g.gp / g.revenue
+    return g[["line_share", "gross_margin"]].unstack("branch").round(4)
+
+
+def shared_customers(df):
+    c = df.dropna(subset=["customer"]).groupby("customer").branch.nunique()
+    return pd.DataFrame({"known_customers": [len(c)], "share_visiting_2plus_branches": [round((c >= 2).mean(), 4)]})
+
+
 def plots(pnl, ratios, bridge):
     fig, ax = plt.subplots(1, 2, figsize=(11, 4))
     ax[0].bar(pnl.index, pnl.gross_margin * 100, color=["#4C72B0", "#C44E52", "#55A868"])
@@ -129,6 +142,8 @@ def main():
     stab = ratio_stability(df); stab.to_csv(OUT / "f1_ratio_stability.csv", index=False)
     val = value_scenarios(df); val.to_csv(OUT / "f1_value_scenarios.csv", index=False)
     gp = garden_products(df); gp.to_csv(OUT / "f1_garden_product_margins.csv", index=False)
+    cm = category_mix(df); cm.to_csv(OUT / "f1_category_mix_and_margin.csv")
+    sc = shared_customers(df); sc.to_csv(OUT / "f1_shared_customers.csv", index=False)
     plots(pnl, ratios, bridge)
 
     pd.set_option("display.width", 200)
@@ -138,6 +153,7 @@ def main():
     print(stab.groupby("dimension").garden_cost_over_harbour.agg(["min", "max"]))
     print(val[["scenario", "delta_gross_profit_6m_usd", "delta_gross_profit_annualised_usd"]].to_string(index=False))
     print(gp.head(8).to_string(index=False))
+    print(cm.loc[["Desserts", "Sandwiches"]]); print(sc.to_string(index=False))
 
 
 if __name__ == "__main__":

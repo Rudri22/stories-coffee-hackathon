@@ -1,0 +1,15 @@
+check,value
+lines,51177
+transactions,33887
+days,181
+first_date,2026-01-01
+last_date,2026-06-30
+exact_duplicate_lines,132
+duplicate_revenue_usd,741.43
+revenue_formula_mismatches,0
+gross_profit_formula_mismatches,0
+blank_customer_id_share,0.3652
+txns_with_conflicting_header_fields,0
+product_branch_pairs_with_more_than_one_price,0
+product_branch_pairs_with_more_than_one_unit_cost,0
+negative_values,0
