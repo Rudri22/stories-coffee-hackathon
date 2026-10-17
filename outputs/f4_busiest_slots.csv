@@ -1,0 +1,13 @@
+branch,weekday,hour,mean_txns_per_hour
+Garden,Tue,21,12.92
+Garden,Tue,22,9.12
+Garden,Fri,21,8.92
+Garden,Tue,20,8.69
+Harbour,Tue,21,17.77
+Harbour,Tue,22,13.54
+Harbour,Fri,21,12.5
+Harbour,Tue,20,11.73
+Uptown,Tue,21,6.19
+Uptown,Tue,20,5.23
+Uptown,Thu,21,5.23
+Uptown,Tue,22,5.19

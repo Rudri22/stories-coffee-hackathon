@@ -184,6 +184,8 @@ def peak_slot_load(df):
     out = tue21.rename(columns={"mean": "tue_21h_mean", "max": "tue_21h_max"})
     out["highest_mean_of_any_other_weekday_hour_slot"] = best_other
     out["all_slots_mean"] = c.groupby("branch").txns.mean()
+    top = slot.sort_values(ascending=False).groupby("branch").head(4).round(2).rename("mean_txns_per_hour").reset_index()
+    top.sort_values(["branch", "mean_txns_per_hour"], ascending=[True, False]).to_csv(OUT / "f4_busiest_slots.csv", index=False)
     return out.round(2)
 
 
