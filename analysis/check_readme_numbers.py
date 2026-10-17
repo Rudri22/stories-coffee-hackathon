@@ -94,7 +94,7 @@ checks = {
 # Each checked value must also literally appear in the README (unicode minus allowed)
 literals = ["46.9%", "65.0%", "$19,485", "10.9%", "37.2%", "$39.0k", "$47.5k", "+4.2%", "16.9%", "+19.6%", "+29.3%", "+8.5%",
             "from 15.1 to 22.2", "from 8.9 to 15.5", "4 in January–February to 19 in June", "35.6% against 56.5%",
-            "$5.74 vs Uptown's $5.45", "16.0 points from the ×1.43 cost rule", "1.43× Harbour's to the cent", "0.0–0.2% across 5 random seeds", "only 0.2–0.5% do", "**Uptown's whole menu**", "between +1% and −9% relative to the controls", "between −10.0% and +0.5% (average −5.3%)", "20%, 50% and 80%", "read positive in 1 of 10", "a proposal we have not tested", "test a price rise before re-pricing", "ask finance what Garden's ×1.43 is", "got about +4%", "50% of consecutive IDs", "**3 → 2**", "Harbour × **1.43**", "Garden × **1.05**",
+            "$5.74 vs Uptown's $5.45", "16.0 points from the ×1.43 cost rule", "1.43× Harbour's to the cent", "0.0–0.2% across 5 random seeds", "only 0.2–0.5% do", "**Uptown's whole menu**", "between +1% and −9% relative to the controls", "between −10.0% and +0.5% (average −5.3%)", "20%, 50% and 80%", "read positive in 1 of 10", "a proposal we have not tested", "no customers switching between branches", "not an established limit", "test a price rise before re-pricing", "ask finance what Garden's ×1.43 is", "got about +4%", "50% of consecutive IDs", "**3 → 2**", "Harbour × **1.43**", "Garden × **1.05**",
             "**−0.25**", "about −1.04", "**≈−$2k**", "conditional scenarios, not forecasts", "no measurable unit response", "from 10% to 7%", "+8.9%", "+4.8% overall", "72% of those are dine-in",
             "(p ≈ 0.03)", "Reference (original unknown)", "$1,706"]
 for lit in literals:
