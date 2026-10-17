@@ -30,6 +30,7 @@ sr = pd.read_csv(OUT / "stress_ranking.csv", index_col=0)
 sp = f("stress_placebo_seeds.csv")
 br = f("f1_margin_bridge.csv")
 pil = f("f5_pilot_thresholds.csv")
+pw = f("f5_pilot_power.csv")
 
 checks = {
     "Garden margin 46.9%": f"{pnl.loc['Garden', 'gross_margin']:.1%}" == "46.9%",
@@ -58,8 +59,14 @@ checks = {
                                          "plausible upper lift (test inversion, ~95%)"]] == ["-0.25", "-0.52", "-1.04"],
     "price-gap value 17k / 14k / 8k / -2k": [round(tot[k] / 1000) for k in ["point estimate", "most price-sensitive robustness spec",
                                       "plausible bound (most price-sensitive)", "stress: elasticity -2.0 (not measured)"]] == [17, 14, 8, -2],
-    "pilot thresholds 11.4-12.8% (menu 10.1-15.7%)": (lambda u: (f"{u[u.in_pilot].breakeven_unit_drop.min():.1%}", f"{u[u.in_pilot].breakeven_unit_drop.max():.1%}",
-        f"{u.breakeven_unit_drop.min():.1%}", f"{u.breakeven_unit_drop.max():.1%}"))(pil[pil.branch == "Uptown"]) == ("11.4%", "12.8%", "10.1%", "15.7%"),
+    "Uptown per-product break-even 10.1-15.7%": (f"{pil[pil.branch == 'Uptown'].breakeven_unit_drop.min():.1%}",
+                                                 f"{pil[pil.branch == 'Uptown'].breakeven_unit_drop.max():.1%}") == ("10.1%", "15.7%"),
+    "pilot misfire 17% / 50% / 0%": (lambda w: (f"{w['5 products pooled, 4 weeks']:.0%}", f"{w['5 products pooled, 8 weeks']:.0%}",
+        f"{w['whole Uptown menu, 8 weeks']:.0%}"))(pw.set_index("design").false_stop_no_change) == ("17%", "50%", "0%"),
+    "lower tail: 0.0% main, 0.3% most favourable": (float(facts["share_placebos_at_or_below_-(breakeven - main estimate)"]),
+        float(facts["share_placebos_at_or_below_-(breakeven - most favourable spec)"])) == (0.0, 0.003),
+    "lower tail across seeds: main <= 0.2%, favourable 0.2-0.5%": sp.lower_tail_share_main.max() <= 0.002
+        and (sp.lower_tail_share_most_favourable.min(), sp.lower_tail_share_most_favourable.max()) == (0.002, 0.005),
     "break-even drop 10% Garden, 13% Uptown": (f"{be['Garden']:.0%}", f"{be['Uptown']:.0%}") == ("10%", "13%"),
     "Garden break-even after cost fix 7%": f"{scen[scen.branch == 'Garden'].breakeven_unit_drop_if_costs_at_uptown_level.iloc[0]:.0%}" == "7%",
     "evening dine-in 72%, 44% of lines": (f"{1 - dp.loc['19-23', 'takeaway_share']:.0%}", f"{dp.loc['19-23', 'share_of_all_lines']:.0%}") == ("72%", "44%"),
@@ -77,10 +84,10 @@ checks = {
                                                   list(rk.loc[["Harbour", "Garden", "Uptown"], "rank_at_equal_costs"])) == ([1, 3, 2], [1, 2, 3]),
 }
 # Each checked value must also literally appear in the README (unicode minus allowed)
-literals = ["46.9%", "65.0%", "$19,485", "10.9%", "37.2%", "$39.0k", "$47.5k", "+4.2%", "16.9%", "+19.6%", "+22.8%", "+29.3%", "+8.5%",
+literals = ["46.9%", "65.0%", "$19,485", "10.9%", "37.2%", "$39.0k", "$47.5k", "+4.2%", "16.9%", "+19.6%", "+29.3%", "+8.5%",
             "from 15.1 to 22.2", "from 8.9 to 15.5", "4 in January–February to 19 in June", "35.6% against 56.5%",
-            "$5.74 vs Uptown's $5.45", "one recorded cost rule", "explains 16 of the 18 points", "ask finance what Garden's ×1.43 is", "got about +4%", "50% of consecutive IDs", "**3 → 2**", "Harbour × **1.43**", "Garden × **1.05**",
-            "**−0.25**", "about −1.04", "**≈−$2k**", "its own** break-even drop", "11.4%–12.8%", "conditional scenarios, not forecasts", "no measurable unit response", "from 10% to 7%", "+8.9%", "+4.8% overall", "72% of those are dine-in",
+            "$5.74 vs Uptown's $5.45", "16.0 points from the ×1.43 cost rule", "1.43× Harbour's to the cent", "0.0–0.2% across 5 random seeds", "only 0.2–0.5% do", "**Uptown's whole menu**", "test a price rise before re-pricing", "ask finance what Garden's ×1.43 is", "got about +4%", "50% of consecutive IDs", "**3 → 2**", "Harbour × **1.43**", "Garden × **1.05**",
+            "**−0.25**", "about −1.04", "**≈−$2k**", "conditional scenarios, not forecasts", "no measurable unit response", "from 10% to 7%", "+8.9%", "+4.8% overall", "72% of those are dine-in",
             "(p ≈ 0.03)", "Reference (original unknown)", "$1,706"]
 for lit in literals:
     checks[f"README mentions {lit}"] = lit in readme

@@ -143,13 +143,16 @@ def pricing_scenarios(df, sens):
     return pd.concat([out, tot], ignore_index=True).round(4)
 
 
-PILOT_PRODUCTS = ["Iced Latte", "Iced Matcha", "Butter Croissant", "Classic Matcha", "Cappuccino"]  # fixed before thresholds
+def pilot_products(df, n=5):
+    """Selection rule, fixed before any threshold: Uptown's top n products by units sold, Jan-Jun."""
+    return list(df[df.branch == "Uptown"].groupby("product").qty.sum().sort_values(ascending=False).head(n).index)
 
 
 def pilot_thresholds(df):
     """Per-product break-even unit drop for raising Garden/Uptown prices to Harbour's: d = 1 - m / (m + u), with m the
     product's full-price unit margin at that branch and u its price rise. A branch-wide average can approve a product
     that loses money, so the pilot uses each selected product's own threshold."""
+    pilot = pilot_products(df)
     t = df[df.discount == 0].groupby(["product", "branch"])[["price", "unit_cost"]].first().unstack("branch")
     rows = []
     for b in ["Garden", "Uptown"]:
@@ -158,7 +161,49 @@ def pilot_thresholds(df):
         be = 1 - m / (m + up)
         for prod in t.index:
             rows.append({"branch": b, "product": prod, "price_rise": up[prod], "unit_margin": m[prod],
-                         "breakeven_unit_drop": be[prod], "in_pilot": prod in PILOT_PRODUCTS})
+                         "breakeven_unit_drop": be[prod], "in_pilot": prod in pilot})
+    return pd.DataFrame(rows).round(4)
+
+
+def pilot_power(df, threshold=-0.12, true_drop=-0.25):
+    """How noisy is the pilot's statistic with NO price change? Statistic = (Uptown units, test / baseline window) /
+    (Garden+Harbour units, test / baseline) - 1, over consecutive L-week windows in the full weeks 5 Jan - 28 Jun.
+    false_stop = P(statistic < threshold | no change); false_approve = P(a true -25% drop still passes the threshold)."""
+    d = df[(df.date >= "2026-01-05") & (df.date <= "2026-06-28")].copy()
+    d["week"] = (d.date - pd.Timestamp("2026-01-05")).dt.days // 7
+    d["grp"] = np.where(d.branch == "Uptown", "U", "C")
+    w = d.groupby(["product", "grp", "week"]).qty.sum().unstack("week", fill_value=0)
+    n_weeks = w.shape[1]
+
+    def stats(products, L):
+        u, c = w.xs("U", level="grp").loc[products].sum(), w.xs("C", level="grp").loc[products].sum()
+        out = []
+        for i in range(0, n_weeks - 2 * L + 1):
+            ub, ut = u.iloc[i:i + L].sum(), u.iloc[i + L:i + 2 * L].sum()
+            cb, ct = c.iloc[i:i + L].sum(), c.iloc[i + L:i + 2 * L].sum()
+            out.append((ut / ub) / (ct / cb) - 1)
+        return np.array(out)
+
+    pilot = pilot_products(df)
+    menu = list(w.index.get_level_values("product").unique())
+    rows = []
+
+    def add(design, x, units_per_window):
+        rows.append({"design": design, "windows": len(x), "uptown_units_per_window": units_per_window, "sd": x.std(ddof=1),
+                     "false_stop_no_change": (x < threshold).mean(),
+                     "false_approve_true_minus25pct": ((1 + true_drop) * (1 + x) - 1 >= threshold).mean()})
+
+    per = {p: stats([p], 4) for p in pilot}
+    for p, x in per.items():
+        add(f"per product, 4 weeks: {p}", x, w.xs("U", level="grp").loc[p].sum() / n_weeks * 4)
+    allx = np.vstack(list(per.values()))
+    rows.append({"design": "at least one of the 5 products wrongly stopped, 4 weeks", "windows": allx.shape[1],
+                 "false_stop_no_change": (allx < threshold).any(axis=0).mean()})
+    up = w.xs("U", level="grp")
+    add("5 products pooled, 4 weeks", stats(pilot, 4), up.loc[pilot].sum().sum() / n_weeks * 4)
+    add("5 products pooled, 8 weeks", stats(pilot, 8), up.loc[pilot].sum().sum() / n_weeks * 8)
+    add("whole Uptown menu, 4 weeks", stats(menu, 4), up.sum().sum() / n_weeks * 4)
+    add("whole Uptown menu, 8 weeks", stats(menu, 8), up.sum().sum() / n_weeks * 8)
     return pd.DataFrame(rows).round(4)
 
 
@@ -261,6 +306,8 @@ def main():
     sens = price_sensitivity(); sens.to_csv(OUT / "f5_price_sensitivity.csv", index=False)
     scen = pricing_scenarios(df, sens); scen.to_csv(OUT / "f5_pricing_scenarios.csv", index=False)
     pil = pilot_thresholds(df); pil.to_csv(OUT / "f5_pilot_thresholds.csv", index=False)
+    pw = pilot_power(df); pw.to_csv(OUT / "f5_pilot_power.csv", index=False)
+    print("--- pilot power\n" + pw.to_string(index=False))
     print("--- pilot thresholds (range by branch, then pilot products at Uptown)")
     print(pil.groupby("branch").breakeven_unit_drop.agg(["min", "max"]).to_string())
     print(pil[(pil.branch == "Uptown") & pil.in_pilot][["product", "unit_margin", "breakeven_unit_drop"]].to_string(index=False))

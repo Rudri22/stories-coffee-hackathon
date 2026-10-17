@@ -105,6 +105,7 @@ def main():
                      "block_placebo_did_p99": np.percentile(plac, 99),
                      "share_block_placebo_as_extreme": (np.abs(plac) >= abs(o.did.mean())).mean(), "n_placebos": len(plac)})
         details.append(o.assign(segment_metric=label))
+        if label == "promoted units": plac_units = plac
         if label == "promoted units": o_units = o
         if label == "promoted gp": o_gp = o
     res = pd.DataFrame(rows).round(4)
@@ -155,6 +156,10 @@ def main():
                     "promoted_units_did": did(d, t, blk, excluded | hol, "units", "promoted").did.mean(),
                     "promoted_gp_did": did(d, t, blk, excluded | hol, "gp", "promoted").did.mean()})
     pd.DataFrame(rob).round(6).to_csv(OUT / "f2_robustness.csv", index=False)
+    # Test inversion uses the LOWER tail: a true break-even lift shows up this low only if chance pushes the estimate DOWN
+    best = max(r["promoted_units_did"] for r in rob)
+    facts["share_placebos_at_or_below_-(breakeven - main estimate)"] = round(float((plac_units <= -(breakeven - o_units.did.mean())).mean()), 4)
+    facts["share_placebos_at_or_below_-(breakeven - most favourable spec)"] = round(float((plac_units <= -(breakeven - best)).mean()), 4)
     print(pd.DataFrame(rob).round(4).to_string(index=False))
     pd.DataFrame(list(facts.items()), columns=["fact", "value"]).to_csv(OUT / "f2_facts.csv", index=False)
 

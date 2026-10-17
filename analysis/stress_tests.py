@@ -50,6 +50,7 @@ def placebo_seeds(df, seeds=(0, 1, 2, 3, 4), n=1000):
     all_days = d.loc[("Harbour", "promoted")].index
     starts = [i for i in range(len(all_days) - 7) if all(all_days[i + k] not in excluded for k in range(8))]
     obs = f2.did(d, t, days, excluded, "units", "promoted").did.mean()
+    best = pd.read_csv(OUT / "f2_robustness.csv").promoted_units_did.max()  # most favourable specification
     h = df[(df.branch == "Harbour") & df.category.isin(promo.category.unique()) & (df.discount == 0)]
     m = h.gross_profit.sum() / h.revenue.sum()
     gap = f2.PROMO_RATE / (m - f2.PROMO_RATE) - obs  # how far the true lift would have to exceed the estimate to break even
@@ -66,7 +67,8 @@ def placebo_seeds(df, seeds=(0, 1, 2, 3, 4), n=1000):
                     pl.append(r.mean())
         pl = np.array(pl)
         rows.append({"seed": seed, "placebo_p2.5": np.percentile(pl, 2.5), "placebo_p97.5": np.percentile(pl, 97.5),
-                     "placebo_p99": np.percentile(pl, 99), "gap_to_breakeven": gap, "share_placebos_reaching_gap": (pl >= gap).mean()})
+                     "placebo_p99": np.percentile(pl, 99), "gap_to_breakeven": gap, "share_placebos_reaching_gap": (pl >= gap).mean(),
+                     "lower_tail_share_main": (pl <= -gap).mean(), "lower_tail_share_most_favourable": (pl <= -(gap + obs - best)).mean()})
     return pd.DataFrame(rows).round(4)
 
 

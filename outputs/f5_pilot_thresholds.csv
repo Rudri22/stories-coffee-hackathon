@@ -6,13 +6,13 @@ Garden,Banana Bread,0.0494,0.4944,0.0909,False
 Garden,Blueberry Muffin,0.0506,0.5266,0.0877,False
 Garden,Brownie,0.0505,0.3417,0.1287,False
 Garden,Butter Croissant,0.0493,0.5534,0.0818,True
-Garden,Cappuccino,0.0494,0.6049,0.0755,True
+Garden,Cappuccino,0.0494,0.6049,0.0755,False
 Garden,Caramel Latte,0.0504,0.5357,0.0861,False
 Garden,Chai Latte,0.0495,0.5962,0.0767,False
 Garden,Cheesecake Slice,0.0504,0.3481,0.1264,False
 Garden,Chicken Pesto Sandwich,0.0502,0.3126,0.1385,False
 Garden,Chicken Salad Bowl,0.0498,0.351,0.1242,False
-Garden,Chocolate Cookie,0.0508,0.5873,0.0796,False
+Garden,Chocolate Cookie,0.0508,0.5873,0.0796,True
 Garden,Chocolate Croissant,0.0494,0.4682,0.0955,False
 Garden,Cinnamon Roll,0.0505,0.3786,0.1176,False
 Garden,Classic Matcha,0.0496,0.4961,0.0909,True
@@ -51,13 +51,13 @@ Uptown,Banana Bread,0.0937,0.6464,0.1266,False
 Uptown,Blueberry Muffin,0.095,0.6675,0.1246,False
 Uptown,Brownie,0.0951,0.5385,0.1502,False
 Uptown,Butter Croissant,0.0943,0.6886,0.1204,True
-Uptown,Cappuccino,0.0925,0.7224,0.1136,True
+Uptown,Cappuccino,0.0925,0.7224,0.1136,False
 Uptown,Caramel Latte,0.0942,0.6739,0.1226,False
 Uptown,Chai Latte,0.0933,0.7183,0.1149,False
 Uptown,Cheesecake Slice,0.0941,0.5432,0.1477,False
 Uptown,Chicken Pesto Sandwich,0.094,0.5194,0.1532,False
 Uptown,Chicken Salad Bowl,0.0937,0.5464,0.1464,False
-Uptown,Chocolate Cookie,0.096,0.7119,0.1189,False
+Uptown,Chocolate Cookie,0.096,0.7119,0.1189,True
 Uptown,Chocolate Croissant,0.0931,0.6275,0.1293,False
 Uptown,Cinnamon Roll,0.0951,0.5648,0.1442,False
 Uptown,Classic Matcha,0.0937,0.6478,0.1264,True
