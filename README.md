@@ -5,7 +5,7 @@
 **Team members:** Rudy Abedulhadi · Karen El Helayel · Jad Faddoul
 
 ## Conclusion (one paragraph)
-**Garden loses about $16k of gross profit every six months (≈$32k a year at today's volume), and nearly all of it behaves like a single branch-level cost rule rather than an operational problem.** Garden's recorded unit cost is **1.430× Harbour's on every one of 45 products**. The ratio holds in every month, every category, and for both dine-in and takeaway. That pulls Garden's gross margin down to **46.9%**, against **65.0%** at Harbour and **62.6%** at Uptown. Product mix explains only 0.3 points of the 18-point gap and Garden's lower prices 1.8 points; **costs explain 16.0 points**. A multiplier this uniform does not look like waste, theft or spoilage. Those would vary by product perishability and over time. It points to one branch-level input: a supplier or distributor contract, or an overhead allocation booked into unit cost. **Recommended action:** before changing anything operational, Stories should audit how Garden's unit costs are produced, using 4 weeks of invoices for its top 10 products against Harbour's. If the gap is a real purchase price, move Garden onto Harbour's supply terms. Raising Garden's prices instead is worth at most ≈$10k a year, and nothing if demand is price-sensitive (elasticity −2). We also found that the March and May discount campaigns came with **−3.9% transactions** against matched days, and that a forecasting model beats a simple baseline by only a small margin. Both are secondary to the cost audit.
+**Garden gave up about $16k of gross profit in six months (measured excess cost against Harbour's unit costs; ≈$32k a year only if volume stays flat, assumption A6), and nearly all of it behaves like a single branch-level cost rule rather than an operational problem.** Garden's recorded unit cost is **1.430× Harbour's on every one of 45 products** (1.46× the average of Harbour and Uptown). The ratio holds in every month, every category, and for both dine-in and takeaway. That pulls Garden's gross margin down to **46.9%**, against **65.0%** at Harbour and **62.6%** at Uptown. Product mix explains only 0.3 points of the 18-point gap and Garden's lower prices 1.8 points; **costs explain 16.0 points**. A multiplier this uniform does not look like waste, theft or spoilage. Those would vary by product perishability and over time. It points to one branch-level input: a supplier or distributor contract, or an overhead allocation booked into unit cost. **Recommended action:** before changing anything operational, Stories should audit how Garden's unit costs are produced, using 4 weeks of invoices for its top 10 products against Harbour's. The $16k is recoverable only if the gap turns out to be an avoidable purchase cost; if so, move Garden onto Harbour's supply terms. Raising Garden's prices instead is worth at most ≈$10k a year, and nothing if demand is price-sensitive (elasticity −2). Two secondary results. First, Harbour's 15% promotions on cold coffee and desserts showed no detectable rise in units (+4.2%, within chance) when they needed +29% to break even, so gross profit on those items fell about 17%. Second, a forecasting model beats a simple baseline by only a small margin.
 
 > **Measured vs estimated.** Every number marked *(measured)* comes directly from the data via `analysis/`. Every $ "value" is an *(estimate)* resting on the assumptions in [§5](#5-assumptions-and-how-they-change-the-answer).
 
@@ -16,7 +16,7 @@ Stories' data team already knows how many lattes each branch sells. We looked fo
 
 - **Chosen:** F1, branch margin leakage. It is the largest $ lever in the data, and it leads to a concrete, cheap first action.
 - **Also tested:**
-  - F2: did the discount campaigns pay off?
+  - F2: did Harbour's 15% promotions pay off? No.
   - F3: can demand forecasting improve staffing? Brief answer: only slightly.
 
 ## 2. F1: Garden margin leak (main finding)
@@ -72,14 +72,28 @@ Garden's weakest products sit around 29–34% margin: Sparkling Water, the Turke
 2. Ask finance how "Unit Cost" is calculated for each branch.
 3. If the gap is a real purchase price, move 3 products (for example Iced Latte, Butter Croissant, Brownie) onto Harbour's supplier for 4 weeks. Check that recorded unit cost drops while sales per day and the product mix stay within their normal weekly range.
 
-## 3. F2: Discount campaigns (secondary)
-Campaign days were **detected from the data**: days whose share of discounted lines exceeded the median plus 3 robust standard deviations. That gives two 8-day bursts, 12–19 March and 12–19 May, plus 3 isolated days. The 15% discount tier exists only at Harbour (`outputs/f2_*`).
+## 3. F2: Harbour's 15% promotions did not pay for themselves
+**What the data shows** (`outputs/f2_facts.csv`, measured):
+- The 15% discount appears **only at Harbour**, on **16 days** (12–19 March and 12–19 May), and **only on Cold Coffee and Desserts**: Iced Latte, Iced Americano, Cold Brew, Iced Mocha, Coffee Frappe, Brownie, Cheesecake, Frozen Yoghurt and Tiramisu.
+- On those days, every one of those units was discounted.
+- A separate 10% discount runs at a steady background rate at all three branches.
 
-- **Measured:** across 57 branch-days, transactions were on average **3.9% *below*** the same weekday 1–3 weeks before and after. Only 35% of branch-days showed any lift. Gross profit was $1,158 below the matched days, and $666 of discount was given on those days.
-- **Is that noise?** We built a placebo check: the same method on random non-campaign days, averaged over 57 days. Only **2.5%** of those placebo averages came out as low as −3.9%.
-- **Not causal** (R10). Campaigns may have been launched *because* traffic was weak (reverse causality), and nearby holidays are not in the data.
-- **Discounted baskets are larger** (1.81 vs 1.57 items, AOV $9.60 vs $8.94). This is correlation only: discounts may be tied to combos.
-- **Value is small.** Total discount over 6 months was $2,176 (measured). **Action:** run the next campaign as a geographic A/B test, discounting at one branch and holding out a comparable one, before running it chain-wide.
+**Design: a difference-in-differences comparison** (`analysis/f2_promotions.py`). For each promo day, we compare Harbour's sales with the same weekday 1–3 weeks before and after. We subtract the same comparison for Garden and Uptown on the same categories and days, which removes chain-wide effects such as holidays and weather. A placebo check runs the identical method on 1,000 random sets of 16 non-promo days, to show how big a "result" appears by chance.
+
+| Harbour, promo days vs matched days | Harbour change | Garden+Uptown change | **Difference-in-differences** | Chance range (95% of placebos) | Placebos as extreme |
+|---|---:|---:|---:|---:|---:|
+| Units of promoted items | −3.3% | −7.5% | **+4.2%** | −13.5% … +16.5% | 61% |
+| Gross profit on promoted items | −24.7% | −7.9% | **−16.9%** | −15.1% … +15.9% | **3.4%** |
+| Units of other items (halo?) | −2.6% | −1.6% | −1.0% | −9.6% … +11.1% | 85% |
+| Transactions | −3.6% | −3.4% | −0.2% | −8.1% … +9.1% | 96% |
+
+(`outputs/f2_did_results.csv`, per-day detail in `outputs/f2_did_by_day.csv`)
+
+- **Break-even:** promoted items earn a 66.1% margin at full price, so a 15% discount needs **+29% more units** just to hold gross profit level. The measured lift, +4.2%, is not distinguishable from zero.
+- **Result:** on the promoted items, Harbour earned **$1,604** of gross profit against **$2,178** on matched days. Net of the same-day dip at the other branches, that is **−16.9%, about $370** over 16 days. No halo effect on other items and no extra transactions were detected.
+- **Pull-forward check:** in the 7 days after each block, promoted units at Harbour ran 8.9% below matched days, net of the control branches. That is a point estimate with no placebo test, so read it as a warning sign, not a result.
+- **The $ size is small:** $470 of 15% discount was given. Total discounting over 6 months was $2,176. The value of this finding is the *decision rule*, not the money already lost: **stop blanket 15% category discounts**. Promotions should be judged against the +29% break-even, using the same branch-vs-control test before rolling one out.
+- **Not proof of cause** (R10): promo dates were not randomised. Harbour may have scheduled them for weeks it expected to be weak, and with only 16 days a small true lift cannot be ruled out.
 
 ## 4. F3: Demand forecast for staffing (tested, modest value)
 Target: transactions per branch per hour, 07:00–23:00. **Trained on January–May. June was held out and never used for fitting** (R07).
@@ -133,7 +147,8 @@ Each idea below would only be worth pursuing if the data showed a gap to close. 
 ## 6. Weak areas, uncertainty and missing information
 - **Missing information:** supplier invoices, how unit cost is calculated, rent and labour, the campaign calendar, holidays, stock-outs, and weather. With these, F1 becomes a confirmed cash number and F2 becomes causal.
 - **Six months only:** no seasonality across a full year. Summer 2026 may differ.
-- The F2 placebo test assumes campaign days are otherwise comparable to random days. Holidays could break that.
+- The F2 placebo test assumes promo days are otherwise comparable to random days. The control branches absorb chain-wide shocks, but not shocks that hit only Harbour.
+- **Probable dataset artefact:** 81% of known customers first appear in January–February, and new IDs fall to about 20 in June, from a fixed pool of 3,494 IDs. We treat this as a construction artefact, not a real acquisition collapse, and draw no conclusions from it (`outputs/rejected_checks.csv`).
 - The data's exact ratios and the absence of any price change suggest the costing may be formula-driven. We treat that as a finding to verify, not a certainty.
 
 ## 7. Reproduce
@@ -142,14 +157,14 @@ python -m venv .venv
 .venv\Scripts\activate          # Linux/macOS: source .venv/bin/activate
 pip install -r requirements.txt
 # place stories_transactions.csv in data/
-python analysis/run_all.py      # rewrites every table and chart in outputs/ (~20 s)
+python analysis/run_all.py      # rewrites every table and chart in outputs/ (~2 min, mostly the F2 placebo test)
 ```
 
 | Path | Contents |
 |---|---|
 | `analysis/common.py` | Loading, cleaning (de-duplication), data-quality checks → `outputs/data_quality.csv` |
 | `analysis/f1_garden_margin.py` | Branch P&L, unit ratios, margin bridge, alternative-explanation tests, value scenarios |
-| `analysis/f2_promotions.py` | Campaign detection, matched-day comparison, placebo test |
+| `analysis/f2_promotions.py` | Promo facts, difference-in-differences vs control branches, placebo test, break-even |
 | `analysis/f3_demand_forecast.py` | Baselines vs Poisson model, June holdout, staffing simulation |
 | `analysis/rejected_checks.py` | Evidence for the rejected approaches in §4b |
 

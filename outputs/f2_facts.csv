@@ -1,0 +1,12 @@
+fact,value
+promo_days,16
+promo_dates,2026-03-12..2026-03-19 and 2026-05-12..2026-05-19
+promo_branches,Harbour
+promo_categories,"Cold Coffee,Desserts"
+promo_lines,502
+harbour_promoted_lines_on_promo_days_sold_at_full_price,0
+discount_given_usd_15pct,470.1
+discount_given_usd_all_rates_6m,2176.01
+harbour_promoted_full_price_margin,0.6614
+breakeven_unit_lift_for_15pct,0.2933
+post_promo_7d_promoted_units_did,-0.0893
