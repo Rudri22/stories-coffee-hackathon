@@ -1,0 +1,11 @@
+branch,price_uplift,elasticity (assumption),delta_gp_6m (estimate)
+Garden,0.05,0.0,4974.223
+Garden,0.05,-0.5,3729.5265
+Garden,0.05,-1.0,2514.8137
+Garden,0.05,-1.5,1329.3624
+Garden,0.05,-2.0,172.4675
+Uptown,0.0939,0.0,5216.008
+Uptown,0.0939,-0.5,3460.3975
+Uptown,0.0939,-1.0,1781.8208
+Uptown,0.0939,-1.5,176.8975
+Uptown,0.0939,-2.0,-1357.6041

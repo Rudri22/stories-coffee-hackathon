@@ -132,6 +132,16 @@ def plots(pnl, ratios, bridge):
     ax[1].set_title("Same ratio on every product"); ax[1].legend(fontsize=8)
     fig.tight_layout(); fig.savefig(OUT / "f1_margin_and_ratios.png", dpi=130); plt.close(fig)
 
+    # One chart that shows "formula, not waste": each product's Garden/Harbour unit-cost ratio on a flat line
+    r = ratios.sort_values(["category", "product"]).reset_index(drop=True)
+    fig, ax = plt.subplots(figsize=(11, 4.2))
+    ax.scatter(r.index, r.Garden_cost_vs_Harbour, color="#C44E52", s=22, zorder=3)
+    ax.axhline(1.43, color="grey", lw=1, ls="--"); ax.text(len(r) - 0.5, 1.4335, "1.43", ha="right", va="bottom", color="grey")
+    ax.set_ylim(1.0, 1.6); ax.set_ylabel("Garden unit cost / Harbour unit cost")
+    ax.set_xticks(r.index, r["product"], rotation=90, fontsize=7)
+    ax.set_title("Garden's unit cost is 1.43x Harbour's on every product: perishable food, drinks, bakery alike")
+    fig.tight_layout(); fig.savefig(OUT / "f1_cost_ratio_by_product.png", dpi=130); plt.close(fig)
+
 
 def main():
     df = load_clean(verbose=True)

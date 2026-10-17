@@ -1,0 +1,10 @@
+branch,reference_cost_base,actual_cogs_6m,cogs_at_reference_6m,saving_6m
+Harbour,Harbour,52595.59,52595.59,0.0
+Harbour,Garden,52595.59,75210.09,-22614.5
+Harbour,Uptown,52595.59,50481.02,2114.57
+Garden,Harbour,52834.39,36946.89,15887.5
+Garden,Garden,52834.39,52834.39,0.0
+Garden,Uptown,52834.39,35463.93,17370.46
+Uptown,Harbour,20759.45,21630.01,-870.56
+Uptown,Garden,20759.45,30930.03,-10170.58
+Uptown,Uptown,20759.45,20759.45,0.0

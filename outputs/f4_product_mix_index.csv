@@ -1,0 +1,136 @@
+branch,product,index_vs_branch_mean
+Uptown,Halloumi Wrap,1.378
+Garden,Tiramisu Cup,1.32
+Uptown,Turkey & Cheese Sandwich,1.314
+Garden,Frozen Yoghurt Cup,1.313
+Garden,Brownie,1.31
+Uptown,Chicken Pesto Sandwich,1.299
+Uptown,Tuna Sandwich,1.24
+Garden,Cheesecake Slice,1.2
+Harbour,English Breakfast Tea,1.178
+Uptown,Quinoa Bowl,1.165
+Harbour,Almond Croissant,1.127
+Uptown,Still Water,1.097
+Harbour,Cold Brew,1.097
+Harbour,Butter Croissant,1.095
+Harbour,Cinnamon Roll,1.081
+Harbour,Iced Latte,1.072
+Harbour,Soup of the Day,1.072
+Harbour,Blueberry Muffin,1.072
+Harbour,Mint Tea,1.066
+Harbour,Espresso,1.065
+Garden,Egg Sandwich,1.056
+Harbour,Spanish Latte,1.052
+Harbour,Banana Bread,1.05
+Garden,Blueberry Muffin,1.049
+Uptown,Chai Latte,1.047
+Uptown,Flat White,1.047
+Uptown,Iced Mocha,1.046
+Uptown,Avocado Toast,1.045
+Harbour,Americano,1.045
+Uptown,Pistachio Cookie,1.044
+Uptown,Caramel Latte,1.041
+Garden,Spanish Latte,1.041
+Harbour,Iced Americano,1.04
+Uptown,Chocolate Cookie,1.038
+Harbour,Granola Yoghurt,1.038
+Harbour,Cappuccino,1.037
+Uptown,Sparkling Water,1.034
+Uptown,Chicken Salad Bowl,1.034
+Harbour,Vanilla Latte,1.034
+Uptown,Peach Iced Tea,1.033
+Garden,Lemonade,1.029
+Harbour,Classic Matcha,1.029
+Uptown,Cappuccino,1.026
+Garden,Peach Iced Tea,1.025
+Uptown,Americano,1.023
+Harbour,Strawberry Matcha,1.018
+Garden,Classic Matcha,1.018
+Garden,Coffee Frappe,1.014
+Garden,Iced Americano,1.013
+Garden,Fresh Orange Juice,1.012
+Uptown,Strawberry Matcha,1.012
+Garden,Almond Croissant,1.012
+Garden,Soup of the Day,1.012
+Garden,Vanilla Latte,1.01
+Harbour,Sparkling Water,1.01
+Harbour,Lemonade,1.01
+Garden,Chocolate Croissant,1.009
+Garden,Banana Bread,1.008
+Garden,Chai Latte,1.007
+Garden,Chicken Salad Bowl,1.007
+Harbour,Pistachio Cookie,1.005
+Garden,Iced Matcha,1.003
+Uptown,Coffee Frappe,1.001
+Harbour,Fresh Orange Juice,1.001
+Harbour,Chocolate Croissant,1.0
+Uptown,Iced Matcha,1.0
+Harbour,Iced Matcha,0.997
+Uptown,Cinnamon Roll,0.995
+Garden,Caramel Latte,0.995
+Harbour,Chocolate Cookie,0.994
+Garden,Avocado Toast,0.991
+Uptown,Chocolate Croissant,0.99
+Uptown,Granola Yoghurt,0.988
+Uptown,Fresh Orange Juice,0.988
+Harbour,Coffee Frappe,0.985
+Garden,Iced Mocha,0.982
+Uptown,Egg Sandwich,0.98
+Harbour,Flat White,0.98
+Uptown,Espresso,0.977
+Uptown,Mint Tea,0.974
+Garden,Granola Yoghurt,0.974
+Garden,Flat White,0.973
+Harbour,Iced Mocha,0.972
+Harbour,Cheesecake Slice,0.971
+Garden,Strawberry Matcha,0.97
+Garden,Quinoa Bowl,0.969
+Garden,Chocolate Cookie,0.968
+Uptown,Iced Latte,0.965
+Harbour,Caramel Latte,0.965
+Garden,Iced Latte,0.964
+Harbour,Egg Sandwich,0.964
+Harbour,Avocado Toast,0.964
+Garden,Butter Croissant,0.962
+Harbour,Still Water,0.962
+Uptown,Lemonade,0.961
+Garden,Mint Tea,0.959
+Garden,Espresso,0.959
+Harbour,Chicken Salad Bowl,0.959
+Garden,Sparkling Water,0.956
+Uptown,Vanilla Latte,0.956
+Uptown,Classic Matcha,0.954
+Garden,Cold Brew,0.954
+Garden,Pistachio Cookie,0.952
+Uptown,Cold Brew,0.949
+Uptown,Iced Americano,0.947
+Harbour,Chai Latte,0.946
+Harbour,Brownie,0.943
+Uptown,Butter Croissant,0.943
+Harbour,Peach Iced Tea,0.942
+Garden,Still Water,0.942
+Uptown,Banana Bread,0.941
+Garden,Cappuccino,0.937
+Garden,Americano,0.932
+Uptown,English Breakfast Tea,0.925
+Garden,Cinnamon Roll,0.924
+Uptown,Soup of the Day,0.916
+Harbour,Tuna Sandwich,0.912
+Uptown,Spanish Latte,0.907
+Garden,English Breakfast Tea,0.897
+Uptown,Blueberry Muffin,0.879
+Garden,Chicken Pesto Sandwich,0.87
+Harbour,Quinoa Bowl,0.867
+Harbour,Tiramisu Cup,0.86
+Uptown,Almond Croissant,0.86
+Harbour,Turkey & Cheese Sandwich,0.849
+Garden,Tuna Sandwich,0.848
+Harbour,Frozen Yoghurt Cup,0.847
+Uptown,Frozen Yoghurt Cup,0.84
+Garden,Turkey & Cheese Sandwich,0.837
+Harbour,Chicken Pesto Sandwich,0.831
+Uptown,Cheesecake Slice,0.83
+Uptown,Tiramisu Cup,0.82
+Garden,Halloumi Wrap,0.817
+Harbour,Halloumi Wrap,0.805
+Uptown,Brownie,0.748
