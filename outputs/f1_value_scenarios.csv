@@ -1,0 +1,9 @@
+scenario,delta_gross_profit_6m_usd,delta_gross_profit_annualised_usd,garden_gp_6m_measured_usd
+A. Garden unit costs brought to Harbour level,15888.0,31775.0,46696.0
+B. Close half of the cost gap,7944.0,15888.0,46696.0
+C. Garden unit costs brought to Uptown level,17370.0,34741.0,46696.0
+"D. Garden prices raised to Harbour (+5.0%), elasticity 0.0",4974.0,9948.0,46696.0
+"D. Garden prices raised to Harbour (+5.0%), elasticity -0.5",3730.0,7459.0,46696.0
+"D. Garden prices raised to Harbour (+5.0%), elasticity -1.0",2515.0,5030.0,46696.0
+"D. Garden prices raised to Harbour (+5.0%), elasticity -1.5",1329.0,2659.0,46696.0
+"D. Garden prices raised to Harbour (+5.0%), elasticity -2.0",172.0,345.0,46696.0

@@ -1,0 +1,46 @@
+product,category,Garden_price_vs_Harbour,Garden_cost_vs_Harbour,Uptown_price_vs_Harbour,Uptown_cost_vs_Harbour,Harbour_unit_margin,Garden_unit_margin,Uptown_unit_margin
+Almond Croissant,Bakery,0.9528,1.4293,0.9155,0.9581,0.6248,0.4371,0.6073
+Americano,Hot Coffee,0.9517,1.4306,0.9124,0.9583,0.7825,0.673,0.7715
+Avocado Toast,Breakfast,0.9526,1.4306,0.9143,0.9593,0.5786,0.3672,0.5579
+Banana Bread,Bakery,0.9529,1.4331,0.9143,0.9618,0.6638,0.4944,0.6464
+Blueberry Muffin,Bakery,0.9518,1.4275,0.9133,0.9618,0.6843,0.5266,0.6675
+Brownie,Desserts,0.9519,1.4304,0.9131,0.962,0.5619,0.3417,0.5385
+Butter Croissant,Bakery,0.953,1.4298,0.9138,0.9561,0.7023,0.5534,0.6886
+Cappuccino,Hot Coffee,0.9529,1.4286,0.9153,0.9643,0.7365,0.6049,0.7224
+Caramel Latte,Hot Coffee,0.952,1.4278,0.9139,0.9626,0.6904,0.5357,0.6739
+Chai Latte,Matcha & Tea,0.9528,1.4324,0.9147,0.9595,0.7314,0.5962,0.7183
+Cheesecake Slice,Desserts,0.952,1.4286,0.914,0.961,0.5656,0.3481,0.5432
+Chicken Pesto Sandwich,Sandwiches,0.9522,1.4294,0.9141,0.9594,0.5421,0.3126,0.5194
+Chicken Salad Bowl,Meals,0.9526,1.4301,0.9143,0.9593,0.5677,0.351,0.5464
+Chocolate Cookie,Bakery,0.9517,1.4286,0.9124,0.956,0.7251,0.5873,0.7119
+Chocolate Croissant,Bakery,0.9529,1.4304,0.9148,0.962,0.6457,0.4682,0.6275
+Cinnamon Roll,Bakery,0.9519,1.4286,0.9131,0.9598,0.586,0.3786,0.5648
+Classic Matcha,Matcha & Tea,0.9527,1.4317,0.9143,0.9604,0.6647,0.4961,0.6478
+Coffee Frappe,Cold Coffee,0.952,1.4308,0.9142,0.9605,0.6323,0.4473,0.6137
+Cold Brew,Cold Coffee,0.9519,1.431,0.9131,0.9569,0.7856,0.6777,0.7753
+Egg Sandwich,Breakfast,0.9521,1.4309,0.9136,0.9614,0.6367,0.454,0.6176
+English Breakfast Tea,Matcha & Tea,0.953,1.4386,0.9144,0.9649,0.8425,0.7623,0.8338
+Espresso,Hot Coffee,0.9532,1.4308,0.9137,0.9538,0.7662,0.6491,0.7559
+Flat White,Hot Coffee,0.9519,1.4274,0.9147,0.9597,0.7287,0.5931,0.7153
+Fresh Orange Juice,Cold Drinks,0.952,1.4292,0.9139,0.9623,0.649,0.473,0.6304
+Frozen Yoghurt Cup,Desserts,0.952,1.4312,0.9133,0.9591,0.5836,0.374,0.5627
+Granola Yoghurt,Breakfast,0.9527,1.4307,0.915,0.9608,0.5971,0.3949,0.5769
+Halloumi Wrap,Sandwiches,0.9522,1.43,0.9139,0.9589,0.6038,0.405,0.5843
+Iced Americano,Cold Coffee,0.953,1.4302,0.9158,0.9651,0.7871,0.6805,0.7757
+Iced Latte,Cold Coffee,0.952,1.4277,0.9146,0.9578,0.7046,0.557,0.6907
+Iced Matcha,Matcha & Tea,0.9527,1.4303,0.9152,0.9602,0.6509,0.4759,0.6337
+Iced Mocha,Cold Coffee,0.9527,1.4305,0.9146,0.9596,0.6601,0.4896,0.6433
+Lemonade,Cold Drinks,0.9529,1.4274,0.9139,0.9573,0.7602,0.6409,0.7489
+Mint Tea,Matcha & Tea,0.953,1.4286,0.9138,0.9524,0.8355,0.7534,0.8286
+Peach Iced Tea,Cold Drinks,0.9529,1.4261,0.9143,0.9565,0.7537,0.6315,0.7424
+Pistachio Cookie,Bakery,0.953,1.4322,0.9144,0.9576,0.674,0.5101,0.6586
+Quinoa Bowl,Meals,0.9526,1.4309,0.9141,0.9593,0.5977,0.3957,0.5778
+Soup of the Day,Meals,0.9521,1.4301,0.9134,0.9606,0.6285,0.442,0.6093
+Spanish Latte,Hot Coffee,0.952,1.4293,0.9136,0.9596,0.6832,0.5244,0.6673
+Sparkling Water,Cold Drinks,0.9516,1.4296,0.9135,0.963,0.5329,0.2982,0.5076
+Still Water,Cold Drinks,0.9512,1.4308,0.9122,0.9538,0.6829,0.5231,0.6684
+Strawberry Matcha,Matcha & Tea,0.9527,1.4308,0.9141,0.9591,0.604,0.4052,0.5845
+Tiramisu Cup,Desserts,0.952,1.4316,0.9142,0.9614,0.5858,0.3771,0.5644
+Tuna Sandwich,Sandwiches,0.9526,1.429,0.915,0.9598,0.5985,0.3977,0.5788
+Turkey & Cheese Sandwich,Sandwiches,0.9526,1.4301,0.9141,0.9597,0.5341,0.3005,0.5108
+Vanilla Latte,Hot Coffee,0.9528,1.4302,0.9143,0.9593,0.6993,0.5486,0.6845

@@ -1,0 +1,4 @@
+branch,lines,transactions,revenue,cogs,gross_profit,gross_margin,avg_order_value,discounted_line_share
+Harbour,24586,16334,150099.05,52595.59,97503.46,0.6496,9.1894,0.0763
+Garden,16869,11163,99530.55,52834.39,46696.16,0.4692,8.9161,0.055
+Uptown,9590,6390,55554.11,20759.45,34794.66,0.6263,8.6939,0.0584

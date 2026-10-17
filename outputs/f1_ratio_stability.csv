@@ -1,0 +1,18 @@
+dimension,value,garden_cost_over_harbour
+month,2026-01,1.4299
+month,2026-02,1.43
+month,2026-03,1.4301
+month,2026-04,1.4301
+month,2026-05,1.43
+month,2026-06,1.43
+category,Bakery,1.4299
+category,Breakfast,1.4307
+category,Cold Coffee,1.4297
+category,Cold Drinks,1.4285
+category,Desserts,1.4304
+category,Hot Coffee,1.429
+category,Matcha & Tea,1.4311
+category,Meals,1.4304
+category,Sandwiches,1.4297
+order_type,Dine-in,1.43
+order_type,Takeaway,1.43

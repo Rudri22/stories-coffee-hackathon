@@ -1,0 +1,5 @@
+step,gross_margin,change_pts
+Harbour actual margin,0.6496,
+Garden basket at Harbour prices & costs (mix + discount effect),0.6465,-0.31
+"+ Garden prices, Harbour costs (price effect)",0.6288,-1.77
++ Garden costs = Garden actual margin (cost effect),0.4692,-15.96

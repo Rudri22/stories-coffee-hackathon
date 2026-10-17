@@ -1,0 +1,46 @@
+product,category,units,revenue,gross_profit,gross_margin
+Sparkling Water,Cold Drinks,336,918.33,269.85,0.2938
+Turkey & Cheese Sandwich,Sandwiches,317,3041.6,901.85,0.2965
+Chicken Pesto Sandwich,Sandwiches,353,3769.06,1160.39,0.3079
+Brownie,Desserts,553,2829.56,954.89,0.3375
+Cheesecake Slice,Desserts,461,3091.64,1063.24,0.3439
+Chicken Salad Bowl,Meals,179,2216.05,769.73,0.3473
+Avocado Toast,Breakfast,304,2850.98,1033.06,0.3624
+Frozen Yoghurt Cup,Desserts,484,2961.96,1098.56,0.3709
+Tiramisu Cup,Desserts,451,2935.81,1095.73,0.3732
+Cinnamon Roll,Bakery,457,2343.34,880.94,0.3759
+Granola Yoghurt,Breakfast,187,1461.63,573.38,0.3923
+Quinoa Bowl,Meals,172,1994.52,783.64,0.3929
+Tuna Sandwich,Sandwiches,210,1847.84,728.54,0.3943
+Halloumi Wrap,Sandwiches,286,2832.81,1139.69,0.4023
+Strawberry Matcha,Matcha & Tea,478,3639.21,1464.31,0.4024
+Almond Croissant,Bakery,376,1813.32,786.84,0.4339
+Soup of the Day,Meals,149,1061.8,467.29,0.4401
+Coffee Frappe,Cold Coffee,321,2095.39,933.37,0.4454
+Egg Sandwich,Breakfast,346,2806.92,1267.22,0.4515
+Chocolate Croissant,Bakery,511,2157.58,1002.72,0.4647
+Fresh Orange Juice,Cold Drinks,336,1918.87,900.79,0.4694
+Iced Matcha,Matcha & Tea,765,5211.31,2464.96,0.473
+Iced Mocha,Cold Coffee,362,2251.18,1096.4,0.487
+Banana Bread,Bakery,416,1839.51,903.51,0.4912
+Classic Matcha,Matcha & Tea,650,4170.08,2057.58,0.4934
+Pistachio Cookie,Bakery,417,1430.83,726.1,0.5075
+Still Water,Cold Drinks,367,711.47,370.16,0.5203
+Spanish Latte,Hot Coffee,411,2429.52,1266.39,0.5213
+Blueberry Muffin,Bakery,319,1253.79,657.26,0.5242
+Caramel Latte,Hot Coffee,369,2105.77,1120.54,0.5321
+Vanilla Latte,Hot Coffee,460,2493.82,1362.22,0.5462
+Butter Croissant,Bakery,684,2484.78,1369.86,0.5513
+Iced Latte,Cold Coffee,813,4317.75,2390.94,0.5537
+Chocolate Cookie,Bakery,536,1681.27,984.47,0.5856
+Flat White,Hot Coffee,445,1924.31,1136.66,0.5907
+Chai Latte,Matcha & Tea,382,1997.17,1187.33,0.5945
+Cappuccino,Hot Coffee,515,2075.92,1251.92,0.6031
+Peach Iced Tea,Cold Drinks,411,1822.2,1148.16,0.6301
+Lemonade,Cold Drinks,355,1642.0,1049.15,0.6389
+Espresso,Hot Coffee,212,559.37,362.21,0.6475
+Americano,Hot Coffee,341,1069.49,718.26,0.6716
+Cold Brew,Cold Coffee,461,2361.91,1596.65,0.676
+Iced Americano,Cold Coffee,506,1936.69,1314.31,0.6786
+Mint Tea,Matcha & Tea,196,709.86,533.46,0.7515
+English Breakfast Tea,Matcha & Tea,135,462.33,351.63,0.7606
