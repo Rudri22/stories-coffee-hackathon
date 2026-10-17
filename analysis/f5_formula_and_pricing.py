@@ -209,18 +209,32 @@ def pilot_power(df, threshold=-0.12, true_drop=-0.25):
     i = out.index[out.design == "whole Uptown menu, 8 weeks"][0]
     out.loc[i, ["min", "max", "mean"]] = [menu8.min(), menu8.max(), menu8.mean()]
 
-    # Decision rule "go only if Uptown's relative gross profit does not fall", applied to past 8-week windows:
-    # GP change = (1 + true unit response) * (m + u) / m * (1 + window noise) - 1, with Uptown's margin m and price rise u
-    s = df[df.branch == "Uptown"]
-    m = s.gross_profit.sum() / s.revenue.sum()
+    # Decision rule "go only if Uptown's gross profit relative to the controls does not fall", evaluated on the GROSS-PROFIT
+    # metric itself: past 8-week windows are repriced line by line at Harbour's prices, with a uniform unit response r.
     hp = df[df.branch == "Harbour"].groupby("product").price.first()
-    u = (s.qty * s["product"].map(hp) * (1 - s.discount)).sum() / s.revenue.sum() - 1
-    rule = []
-    for r in [0.0, -0.05, -0.08, -0.10, -0.16]:
-        true_gp = (1 + r) * (m + u) / m - 1
-        rule.append({"true_unit_response": r, "true_gp_change": true_gp,
-                     "share_of_past_windows_stopped": (((1 + true_gp) * (1 + menu8)) - 1 < 0).mean(), "windows": len(menu8)})
-    return out.round(4), pd.DataFrame(rule).round(4)
+    du = d[d.branch == "Uptown"]
+    rep0 = (du.qty * (du["product"].map(hp) * (1 - du.discount) - du.unit_cost)).groupby(du.week).sum()  # repriced GP, r = 0
+    gu = du.gross_profit.groupby(du.week).sum()
+    gc = d[d.branch != "Uptown"].gross_profit.groupby(d[d.branch != "Uptown"].week).sum()
+    L = 8
+    win = range(0, n_weeks - 2 * L + 1)
+    ctrl = np.array([gc.iloc[i + L:i + 2 * L].sum() / gc.iloc[i:i + L].sum() for i in win])
+    base = np.array([gu.iloc[i:i + L].sum() for i in win])
+    hist = np.array([gu.iloc[i + L:i + 2 * L].sum() for i in win]) / base / ctrl - 1
+    test0 = np.array([rep0.iloc[i + L:i + 2 * L].sum() for i in win])
+    r_be = gu.sum() / rep0.sum() - 1  # unit response at which the price rise leaves gross profit unchanged
+    rule = [{"scenario": "no price change (historical drift of the metric)", "true_unit_response": np.nan, "true_gp_change": 0.0,
+             "share_negative_8wk": (hist < 0).mean(), "metric_min": hist.min(), "metric_max": hist.max(), "metric_mean": hist.mean(),
+             "windows": len(hist)}]
+    for name, r in [("price rise, no reaction", 0.0), ("units -5%", -0.05), ("units -8%", -0.08), ("units -10%", -0.10),
+                    ("units just past break-even", round(r_be - 0.001, 4)), ("units -16%", -0.16)]:
+        sim = (1 + r) * test0 / base / ctrl - 1
+        rule.append({"scenario": name, "true_unit_response": r, "true_gp_change": (1 + r) * rep0.sum() / gu.sum() - 1,
+                     "share_negative_8wk": (sim < 0).mean(), "metric_min": sim.min(), "metric_max": sim.max(),
+                     "metric_mean": sim.mean(), "windows": len(sim)})
+    rule = pd.DataFrame(rule)
+    rule["breakeven_unit_response"] = r_be
+    return out.round(4), rule.round(4)
 
 
 def daypart_mix(df):
