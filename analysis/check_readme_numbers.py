@@ -32,6 +32,7 @@ br = f("f1_margin_bridge.csv")
 pil = f("f5_pilot_thresholds.csv")
 pw = f("f5_pilot_power.csv")
 pr = f("f5_pilot_decision_rule.csv").set_index("scenario")
+mc = f("f5_month_cycle.csv").set_index("segment")
 
 checks = {
     "Garden margin 46.9%": f"{pnl.loc['Garden', 'gross_margin']:.1%}" == "46.9%",
@@ -71,6 +72,10 @@ checks = {
     "GP rule: negative in 0/20/50/80/90/100% of windows": [pr.loc[k, "share_negative_8wk"] for k in ["price rise, no reaction", "units -5%",
         "units -8%", "units -10%", "units just past break-even", "units -16%"]] == [0.0, 0.2, 0.5, 0.8, 0.9, 1.0],
     "just-past-break-even is a loss, -16% is a loss": pr.loc["units just past break-even", "true_gp_change"] < 0 and pr.loc["units -16%", "true_gp_change"] < 0,
+    "start-of-month lift +7.5%, z 3.6, 12 days": (f"{mc.loc['all branches', 'days_1_5_minus_rest']:+.1%}", f"{mc.loc['all branches', 'z']:.1f}",
+        int(mc.loc['all branches', 'n_days_1_5'])) == ("+7.5%", "3.6", 12),
+    "start-of-month lift positive in every month and branch": (mc.loc[[i for i in mc.index if i.startswith(("month", "branch"))], "days_1_5_minus_rest"] > 0).all(),
+    "order value days 1-5 $8.91 vs $9.03": (f"{mc.loc['avg order value days 1-5', 'days_1_5_minus_rest']:.2f}", f"{mc.loc['avg order value days 6-31', 'days_1_5_minus_rest']:.2f}") == ("8.91", "9.03"),
     "lower tail: 0.0% main, 0.3% most favourable": (float(facts["share_placebos_at_or_below_-(breakeven - main estimate)"]),
         float(facts["share_placebos_at_or_below_-(breakeven - most favourable spec)"])) == (0.0, 0.003),
     "lower tail across seeds: main <= 0.2%, favourable 0.2-0.5%": sp.lower_tail_share_main.max() <= 0.002
@@ -94,7 +99,7 @@ checks = {
 # Each checked value must also literally appear in the README (unicode minus allowed)
 literals = ["46.9%", "65.0%", "$19,485", "10.9%", "37.2%", "$39.0k", "$47.5k", "+4.2%", "16.9%", "+19.6%", "+29.3%", "+8.5%",
             "from 15.1 to 22.2", "from 8.9 to 15.5", "4 in January–February to 19 in June", "35.6% against 56.5%",
-            "$5.74 vs Uptown's $5.45", "16.0 points from the ×1.43 cost rule", "1.43× Harbour's to the cent", "0.0–0.2% across 5 random seeds", "only 0.2–0.5% do", "**Uptown's whole menu**", "between +1% and −9% relative to the controls", "between −10.0% and +0.5% (average −5.3%)", "20%, 50% and 80%", "read positive in 1 of 10", "a proposal we have not tested", "no customers switching between branches", "not an established limit", "test a price rise before re-pricing", "ask finance what Garden's ×1.43 is", "got about +4%", "50% of consecutive IDs", "**3 → 2**", "Harbour × **1.43**", "Garden × **1.05**",
+            "$5.74 vs Uptown's $5.45", "16.0 points from the ×1.43 cost rule", "1.43× Harbour's to the cent", "0.0–0.2% across 5 random seeds", "only 0.2–0.5% do", "**Uptown's whole menu**", "between +1% and −9% relative to the controls", "between −10.0% and +0.5% (average −5.3%)", "20%, 50% and 80%", "read positive in 1 of 10", "a proposal we have not tested", "no customers switching between branches", "days 1–5 of each month run +7.5%", "z = 3.6", "($8.91 vs $9.03)", "not an established limit", "test a price rise before re-pricing", "ask finance what Garden's ×1.43 is", "got about +4%", "50% of consecutive IDs", "**3 → 2**", "Harbour × **1.43**", "Garden × **1.05**",
             "**−0.25**", "about −1.04", "**≈−$2k**", "conditional scenarios, not forecasts", "no measurable unit response", "from 10% to 7%", "+8.9%", "+4.8% overall", "72% of those are dine-in",
             "(p ≈ 0.03)", "Reference (original unknown)", "$1,706"]
 for lit in literals:

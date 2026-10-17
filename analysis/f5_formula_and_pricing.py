@@ -294,6 +294,42 @@ def holiday_effects(df):
     return eff, test
 
 
+def month_cycle(df):
+    """Start-of-month lift: each day's transactions vs the same weekday 1-3 weeks either side. Strict version keeps only
+    days with all six matched days present (two-sided window) and excludes public holidays on both sides."""
+    t = df.drop_duplicates("txn")
+    hol = {pd.Timestamp(d) for d, _ in HOLIDAYS_2026}
+
+    def ratios(day):
+        out = {}
+        for d in day.index:
+            c = [d + pd.Timedelta(weeks=k) for k in (-3, -2, -1, 1, 2, 3)]
+            c = [x for x in c if x in day.index and x not in hol]
+            if len(c) == 6 and d not in hol:
+                out[d] = day[d] / day[c].mean()
+        return pd.Series(out)
+
+    def first5_vs_rest(r):
+        f, o = r[r.index.day <= 5], r[r.index.day > 5]
+        return f.mean() - o.mean(), (f.mean() - o.mean()) / np.sqrt(f.var() / len(f) + o.var() / len(o)), len(f)
+
+    allr = ratios(t.groupby("date").size())
+    diff, z, n = first5_vs_rest(allr)
+    rows = [{"segment": "all branches", "days_1_5_minus_rest": diff, "z": z, "n_days_1_5": n, "n_days": len(allr)}]
+    for b in BRANCHES:
+        d_, z_, n_ = first5_vs_rest(ratios(t[t.branch == b].groupby("date").size()))
+        rows.append({"segment": f"branch {b}", "days_1_5_minus_rest": d_, "z": z_, "n_days_1_5": n_})
+    for mo, g in allr.groupby(allr.index.month):
+        if (g.index.day <= 5).any():
+            f, o = g[g.index.day <= 5], g[g.index.day > 5]
+            rows.append({"segment": f"month {mo}", "days_1_5_minus_rest": f.mean() - o.mean(), "n_days_1_5": len(f)})
+    k = df.groupby("txn").agg(d=("date", "first"), rev=("revenue", "sum"))
+    rows.append({"segment": "avg order value days 1-5", "days_1_5_minus_rest": k[k.d.dt.day <= 5].rev.mean()})
+    rows.append({"segment": "avg order value days 6-31", "days_1_5_minus_rest": k[k.d.dt.day > 5].rev.mean()})
+    by_day = allr.groupby(allr.index.day).mean().rename("mean_ratio_vs_matched_weekdays")
+    return pd.DataFrame(rows).round(4), by_day.round(4)
+
+
 def ramadan_profile(df):
     tx = df.drop_duplicates("txn")
     win = {"4 weeks before": ("2026-01-21", "2026-02-17"), "Ramadan": RAMADAN, "4 weeks after": ("2026-03-21", "2026-04-17")}
@@ -345,6 +381,7 @@ def main():
     dp = daypart_mix(df); dp.to_csv(OUT / "f5_daypart_mix.csv")
     hol, test = holiday_effects(df); hol.to_csv(OUT / "f5_holiday_effects.csv", index=False); test.to_csv(OUT / "f5_holiday_test.csv", index=False)
     ram = ramadan_profile(df); ram.to_csv(OUT / "f5_ramadan_profile.csv")
+    mc, mcd = month_cycle(df); mc.to_csv(OUT / "f5_month_cycle.csv", index=False); mcd.to_csv(OUT / "f5_month_cycle_by_day.csv")
     sea = seasonality(df); sea.to_csv(OUT / "f5_seasonality.csv")
     bg = background_discount(df); bg.to_csv(OUT / "f5_background_discount.csv", index=False)
 
