@@ -1,0 +1,9 @@
+model,level,WAPE,MAE,bias_pct
+baseline,branch-hour,0.3925,1.7716,-0.0752
+baseline,branch-day,0.1147,8.8,-0.0752
+baseline,"branch-hour, Tuesdays",0.3313,2.2333,-0.0692
+baseline,"branch-hour, 19-22h peak",0.3133,2.2812,-0.0386
+model,branch-hour,0.3588,1.6194,0.0038
+model,branch-day,0.0901,6.91,0.0038
+model,"branch-hour, Tuesdays",0.3022,2.0369,0.0007
+model,"branch-hour, 19-22h peak",0.3012,2.1929,0.0462
