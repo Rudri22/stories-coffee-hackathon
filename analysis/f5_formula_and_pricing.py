@@ -18,20 +18,10 @@ import numpy as np
 import pandas as pd
 from scipy.stats import binom
 
-from common import BRANCHES, OUT, load_clean
+from common import BRANCHES, HOLIDAYS_2026, OUT, load_clean
 
 PROMO_RATE = 0.15
 GRID = np.round(np.arange(0.5, 2.0 + 1e-9, 0.0001), 4)
-
-# Lebanese public holidays in the data window. Islamic dates are provisional (moon sighting).
-HOLIDAYS_2026 = [
-    ("2026-01-01", "New Year's Day"), ("2026-01-06", "Armenian Christmas"), ("2026-02-09", "St Maroun's Day"),
-    ("2026-03-20", "Eid al-Fitr day 1"), ("2026-03-21", "Eid al-Fitr day 2"), ("2026-03-22", "Eid al-Fitr day 3"),
-    ("2026-03-23", "Eid al-Fitr day 4"), ("2026-03-25", "Annunciation"), ("2026-04-03", "Good Friday (Western)"),
-    ("2026-04-05", "Easter Sunday (Western)"), ("2026-04-10", "Good Friday (Orthodox)"),
-    ("2026-04-12", "Easter Sunday (Orthodox)"), ("2026-05-01", "Labour Day"),
-    ("2026-05-25", "Resistance and Liberation Day"), ("2026-05-27", "Eid al-Adha"),
-]
 RAMADAN = ("2026-02-18", "2026-03-19")
 
 
@@ -53,7 +43,9 @@ def best_factor(src, dst):
 
 
 def decode_branch_rules(df, fields=("price", "unit_cost")):
-    """For each field, find the master branch whose list reproduces the other branches' lists best via one multiplier."""
+    """For each field, find a reference branch whose list reproduces the other branches' lists via one multiplier each.
+    Rounding to the cent makes the mapping reversible (the inverse multiplier reproduces the reference list too), so the
+    multipliers alone cannot say which list is the original; reverse_direction_matches reports that check."""
     rows = []
     for field in fields:
         t = df.groupby(["product", "branch"])[field].first().unstack("branch").dropna()
@@ -65,11 +57,12 @@ def decode_branch_rules(df, fields=("price", "unit_cost")):
             if best is None or total > best[0]:
                 best = (total, anchor, fits)
         _, anchor, fits = best
-        rows.append({"field": field, "branch": anchor, "rule": "master list", "multiplier": 1.0,
-                     "exact_cent_matches": len(t), "n_products": len(t)})
+        rows.append({"field": field, "branch": anchor, "rule": "reference list", "multiplier": 1.0,
+                     "exact_cent_matches": len(t), "reverse_direction_matches": np.nan, "n_products": len(t)})
         for b, f, m in fits:
+            rev = int((np.abs(round_cents(t[b].to_numpy() / f) - t[anchor].to_numpy()) < 1e-6).sum())
             rows.append({"field": field, "branch": b, "rule": f"{anchor} x {f}", "multiplier": f,
-                         "exact_cent_matches": m, "n_products": len(t)})
+                         "exact_cent_matches": m, "reverse_direction_matches": rev, "n_products": len(t)})
     return pd.DataFrame(rows)
 
 
@@ -112,12 +105,16 @@ def pricing_scenarios(df, sens):
         uplift = rev_h / s.revenue.sum() - 1
         margin = s.gross_profit.sum() / s.revenue.sum()
         breakeven_drop = 1 - margin / (margin + uplift)  # unit drop that leaves gross profit unchanged
+        # Decisions 1 and 2 interact: if unit costs fell to Uptown's level, margin rises and the break-even drop shrinks
+        cu = df[df.branch == "Uptown"].groupby("product").unit_cost.first()
+        m_fixed = 1 - (s.qty * s["product"].map(cu)).sum() / s.revenue.sum()
+        breakeven_fixed = 1 - m_fixed / (m_fixed + uplift)
         for name, e in cases:
             vol = (1 + uplift) ** e
             d6 = rev_h * vol - s.cogs.sum() * vol - s.gross_profit.sum()
             rows.append({"branch": b, "price_uplift": uplift, "case": name, "elasticity": e,
                          "delta_gp_6m (estimate)": d6, "delta_gp_annual_flat (estimate)": 2 * d6,
-                         "breakeven_unit_drop": breakeven_drop})
+                         "breakeven_unit_drop": breakeven_drop, "breakeven_unit_drop_if_costs_at_uptown_level": breakeven_fixed})
     out = pd.DataFrame(rows)
     tot = out.groupby("case", sort=False)[["delta_gp_6m (estimate)", "delta_gp_annual_flat (estimate)"]].sum().reset_index()
     tot.insert(0, "branch", "Garden+Uptown")
@@ -142,27 +139,42 @@ def matched_ratio(series, day, excluded):
 
 
 def holiday_effects(df):
+    """A holiday 'stands out' if chain traffic falls outside the range of 95% of ordinary days AND all three branches
+    move in that direction. The same rule is applied to ordinary days to get the chance rate for the binomial check."""
     tx = df.drop_duplicates("txn")
     allb = tx.groupby("date").size()
     perb = tx.groupby(["branch", "date"]).size()
     hol = {pd.Timestamp(d): n for d, n in HOLIDAYS_2026}
     excluded = set(hol)
-    null = np.array([matched_ratio(allb, d, excluded) for d in allb.index if d not in excluded])
-    null = null[~np.isnan(null)]
-    lo, hi = np.percentile(null, [2.5, 97.5])
-    rows = []
-    for d, name in hol.items():
-        r = {"date": d.date(), "weekday": d.day_name()[:3], "holiday": name,
-             "ratio_all_branches": matched_ratio(allb, d, excluded)}
+
+    def day_row(d):
+        r = {"ratio_all_branches": matched_ratio(allb, d, excluded)}
         for b in BRANCHES:
             r[f"ratio_{b}"] = matched_ratio(perb.loc[b], d, excluded)
-        r["outside_ordinary_95pct_range"] = not (lo <= r["ratio_all_branches"] <= hi)
+        return r
+
+    ordinary = pd.DataFrame([dict(date=d, **day_row(d)) for d in allb.index if d not in excluded]).dropna()
+    lo, hi = np.percentile(ordinary.ratio_all_branches, [2.5, 97.5])
+
+    def stands_out(r):
+        outside = not (lo <= r["ratio_all_branches"] <= hi)
+        same_dir = all(np.sign(r[f"ratio_{b}"] - 1) == np.sign(r["ratio_all_branches"] - 1) for b in BRANCHES)
+        return outside, outside and same_dir
+
+    flags = ordinary.apply(lambda r: stands_out(r)[1], axis=1)
+    p0 = flags.mean()
+    rows = []
+    for d, name in hol.items():
+        r = {"date": d.date(), "weekday": d.day_name()[:3], "holiday": name, **day_row(d)}
+        r["outside_ordinary_95pct_range"], r["stands_out_at_all_three_branches"] = stands_out(r)
         rows.append(r)
     eff = pd.DataFrame(rows).round(3)
-    k, n = int(eff.outside_ordinary_95pct_range.sum()), len(eff)
-    test = pd.DataFrame([{"ordinary_day_ratio_p2.5": lo, "ordinary_day_ratio_p97.5": hi, "n_ordinary_days": len(null),
-                          "holidays_tested": n, "holidays_outside_range": k, "expected_by_chance": 0.05 * n,
-                          "binomial_p_at_least_k": binom.sf(k - 1, n, 0.05)}]).round(4)
+    k, n = int(eff.stands_out_at_all_three_branches.sum()), len(eff)
+    test = pd.DataFrame([{"ordinary_day_ratio_p2.5": lo, "ordinary_day_ratio_p97.5": hi, "n_ordinary_days": len(ordinary),
+                          "chance_rate_ordinary_days_stand_out": p0, "holidays_tested": n,
+                          "holidays_outside_range_any_direction": int(eff.outside_ordinary_95pct_range.sum()),
+                          "holidays_standing_out_all_branches": k, "expected_by_chance": p0 * n,
+                          "binomial_p_at_least_k": binom.sf(k - 1, n, p0)}]).round(4)
     return eff, test
 
 

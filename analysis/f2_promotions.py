@@ -16,7 +16,7 @@ Correlation caveat (R10): no randomisation; the promo dates may have been chosen
 import numpy as np
 import pandas as pd
 
-from common import OUT, load_clean, load_raw
+from common import HOLIDAYS_2026, OUT, load_clean, load_raw
 
 PROMO_RATE = 0.15
 
@@ -118,7 +118,8 @@ def main():
     pa = did(d, t, after, excluded | set(after), "units", "promoted")
     facts.update({"post_promo_7d_promoted_units_did": round(pa.did.mean(), 4)})
     # Pre-trend: was Harbour already diverging from the control branches in the 7 days BEFORE each block?
-    before = [pd.Timestamp(promo_days[0]) - pd.Timedelta(days=k) for k in range(1, 8)] +              [pd.Timestamp(promo_days[8]) - pd.Timedelta(days=k) for k in range(1, 8)]
+    before = [pd.Timestamp(promo_days[0]) - pd.Timedelta(days=k) for k in range(1, 8)] + \
+             [pd.Timestamp(promo_days[8]) - pd.Timedelta(days=k) for k in range(1, 8)]
     pb = did(d, t, before, excluded | set(before), "units", "promoted")
     facts.update({"pre_promo_7d_promoted_units_did": round(pb.did.mean(), 4)})
 
@@ -135,7 +136,19 @@ def main():
     rob.append({"check": "duplicates kept (raw data)",
                 "promoted_units_did": did(d_raw, t_raw, promo_days, excluded, "units", "promoted").did.mean(),
                 "promoted_gp_did": did(d_raw, t_raw, promo_days, excluded, "gp", "promoted").did.mean()})
-    pd.DataFrame(rob).round(4).to_csv(OUT / "f2_robustness.csv", index=False)
+    # Holiday contamination: public holidays among the matched days, and the DiD with them excluded
+    hol = {pd.Timestamp(x) for x, _ in HOLIDAYS_2026}
+    for i, blk in enumerate([promo_days[:8], promo_days[8:]], 1):
+        used = sorted({pd.Timestamp(x) + pd.Timedelta(weeks=k) for x in blk for k in (-3, -2, -1, 1, 2, 3)} & hol)
+        facts[f"holidays_among_block{i}_matched_days"] = ", ".join(str(c.date()) for c in used)
+    rob.append({"check": "matched days exclude public holidays",
+                "promoted_units_did": did(d, t, promo_days, excluded | hol, "units", "promoted").did.mean(),
+                "promoted_gp_did": did(d, t, promo_days, excluded | hol, "gp", "promoted").did.mean()})
+    for i, blk in enumerate([promo_days[:8], promo_days[8:]], 1):
+        rob.append({"check": f"block {i} only, matched days exclude public holidays",
+                    "promoted_units_did": did(d, t, blk, excluded | hol, "units", "promoted").did.mean(),
+                    "promoted_gp_did": did(d, t, blk, excluded | hol, "gp", "promoted").did.mean()})
+    pd.DataFrame(rob).round(6).to_csv(OUT / "f2_robustness.csv", index=False)
     print(pd.DataFrame(rob).round(4).to_string(index=False))
     pd.DataFrame(list(facts.items()), columns=["fact", "value"]).to_csv(OUT / "f2_facts.csv", index=False)
 

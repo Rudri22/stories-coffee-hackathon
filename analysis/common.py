@@ -10,6 +10,16 @@ OUT.mkdir(exist_ok=True)
 
 BRANCHES = ["Harbour", "Garden", "Uptown"]
 
+# Lebanese public holidays in the data window (published 2026 calendars). Islamic dates are provisional (moon sighting).
+HOLIDAYS_2026 = [
+    ("2026-01-01", "New Year's Day"), ("2026-01-06", "Armenian Christmas"), ("2026-02-09", "St Maroun's Day"),
+    ("2026-03-20", "Eid al-Fitr day 1"), ("2026-03-21", "Eid al-Fitr day 2"), ("2026-03-22", "Eid al-Fitr day 3"),
+    ("2026-03-23", "Eid al-Fitr day 4"), ("2026-03-25", "Annunciation"), ("2026-04-03", "Good Friday (Western)"),
+    ("2026-04-05", "Easter Sunday (Western)"), ("2026-04-10", "Good Friday (Orthodox)"),
+    ("2026-04-12", "Easter Sunday (Orthodox)"), ("2026-05-01", "Labour Day"),
+    ("2026-05-25", "Resistance and Liberation Day"), ("2026-05-27", "Eid al-Adha"),
+]
+
 
 def load_raw() -> pd.DataFrame:
     df = pd.read_csv(DATA, dtype={"Customer ID": "string"})

@@ -39,28 +39,33 @@ checks = {
     "block placebo p97.5 +17.3%": f"{did.loc['promoted units', 'block_placebo_did_p97.5']:+.1%}" == "+17.3%",
     "block placebo p99 +20.9%": f"{did.loc['promoted units', 'block_placebo_did_p99']:+.1%}" == "+20.9%",
     "break-even +29.3%": f"{float(facts['breakeven_unit_lift_for_15pct']):.1%}" == "29.3%",
-    "robustness range -0.1..+8.5%": (f"{rob.promoted_units_did.min():+.1%}", f"{rob.promoted_units_did.max():+.1%}") == ("-0.1%", "+8.5%"),
+    "robustness range -0.1..+8.9%": (f"{rob.promoted_units_did.min():+.1%}", f"{rob.promoted_units_did.max():+.1%}") == ("-0.1%", "+8.9%"),
+    "holidays excluded: +4.8% overall, March +8.9%, May +0.8%": [f"{rob.set_index('check').promoted_units_did[k]:+.1%}" for k in [
+        "matched days exclude public holidays", "block 1 only, matched days exclude public holidays",
+        "block 2 only, matched days exclude public holidays"]] == ["+4.8%", "+8.9%", "+0.8%"],
     "slots >=10 txns/hr: 4 -> 19": (int(gc.loc["slots_avg_ge_10", "Jan-Feb"]), int(gc.loc["slots_avg_ge_10", "June"])) == (4, 19),
     "Harbour Tue 21h: 15.1 -> 22.2": (f"{gc.loc['harbour_tue_21h', 'Jan-Feb']:.1f}", f"{gc.loc['harbour_tue_21h', 'June']:.1f}") == ("15.1", "22.2"),
     "Harbour Fri 21h: 8.9 -> 15.5": (f"{gc.loc['harbour_fri_21h', 'Jan-Feb']:.1f}", f"{gc.loc['harbour_fri_21h', 'June']:.1f}") == ("8.9", "15.5"),
     "4 multipliers reproduce 45/45 each": (rules.exact_cent_matches == 45).all()
-        and sorted(rules[rules.rule != "master list"].multiplier.round(2)) == [0.96, 0.96, 1.05, 1.43],
+        and sorted(rules[rules.rule != "reference list"].multiplier.round(2)) == [0.96, 0.96, 1.05, 1.43],
     "price endings 100% / 11% / 4%": [f"{ends[b]:.0%}" for b in ["Garden", "Harbour", "Uptown"]] == ["100%", "11%", "4%"],
-    "elasticity -0.25 / -0.50 / -0.98": [f"{sens[k]:.2f}" for k in ["measured unit lift (DiD)", "robustness: largest lift",
-                                         "plausible upper lift (test inversion, ~95%)"]] == ["-0.25", "-0.50", "-0.98"],
+    "elasticity -0.25 / -0.52 / -0.98": [f"{sens[k]:.2f}" for k in ["measured unit lift (DiD)", "robustness: largest lift",
+                                         "plausible upper lift (test inversion, ~95%)"]] == ["-0.25", "-0.52", "-0.98"],
     "price-gap value 17k / 14k / 9k": [round(tot[k] / 1000) for k in ["point estimate", "most price-sensitive robustness spec",
                                       "plausible bound (most price-sensitive)"]] == [17, 14, 9],
     "break-even drop 10% Garden, 13% Uptown": (f"{be['Garden']:.0%}", f"{be['Uptown']:.0%}") == ("10%", "13%"),
+    "Garden break-even after cost fix 7%": f"{scen[scen.branch == 'Garden'].breakeven_unit_drop_if_costs_at_uptown_level.iloc[0]:.0%}" == "7%",
     "evening dine-in 72%, 44% of lines": (f"{1 - dp.loc['19-23', 'takeaway_share']:.0%}", f"{dp.loc['19-23', 'share_of_all_lines']:.0%}") == ("72%", "44%"),
-    "holidays 4 of 15, p = 0.005": (int(ht.holidays_outside_range), int(ht.holidays_tested), f"{ht.binomial_p_at_least_k:.3f}") == (4, 15, "0.005"),
+    "holidays 3 of 15 at all branches, p = 0.03": (int(ht.holidays_standing_out_all_branches), int(ht.holidays_tested),
+                                                     f"{ht.binomial_p_at_least_k:.2f}", f"{ht.expected_by_chance:.1f}") == (3, 15, "0.03", "0.7"),
     "10% discount $1,706": round(bg["discount given, 6 months (USD)"]) == 1706,
 }
 # Each checked value must also literally appear in the README (unicode minus allowed)
 literals = ["46.9%", "65.0%", "$19,485", "10.9%", "37.2%", "$39.0k", "$47.5k", "+4.2%", "16.9%", "+17.3%", "+20.9%", "+29.3%", "+8.5%",
             "from 15.1 to 22.2", "from 8.9 to 15.5", "4 in January–February to 19 in June", "35.6% against 56.5%",
-            "four multipliers reproduce every branch price and unit cost to the cent", "Harbour × **1.43**", "Garden × **1.05**",
-            "**−0.25**", "about −0.98", "**≈$17k**", "≈$9k–$17k", "13% at Uptown, 10% at Garden", "72% of those are dine-in",
-            "binomial p = 0.005", "$1,706"]
+            "four fixed multipliers link every branch's prices and unit costs to the cent", "Harbour × **1.43**", "Garden × **1.05**",
+            "**−0.25**", "about −0.98", "**≈$9k**", "≈$9k–$17k", "no measurable unit response", "from 10% to 7%", "+8.9%", "+4.8% overall", "13% at Uptown, 10% at Garden", "72% of those are dine-in",
+            "(p ≈ 0.03)", "Reference (original unknown)", "$1,706"]
 for lit in literals:
     checks[f"README mentions {lit}"] = lit in readme
 

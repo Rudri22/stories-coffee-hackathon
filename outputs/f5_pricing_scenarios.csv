@@ -1,10 +1,10 @@
-branch,price_uplift,case,elasticity,delta_gp_6m (estimate),delta_gp_annual_flat (estimate),breakeven_unit_drop
-Garden,0.05,point estimate,-0.2537,4338.8713,8677.7425,0.0963
-Garden,0.05,most price-sensitive robustness spec,-0.5025,3723.379,7446.7579,0.0963
-Garden,0.05,plausible bound (most price-sensitive),-0.9839,2553.4677,5106.9354,0.0963
-Uptown,0.0939,point estimate,-0.2537,4315.3681,8630.7361,0.1304
-Uptown,0.0939,most price-sensitive robustness spec,-0.5025,3451.8159,6903.6318,0.1304
-Uptown,0.0939,plausible bound (most price-sensitive),-0.9839,1834.7056,3669.4111,0.1304
-Garden+Uptown,,point estimate,,8654.2393,17308.4787,
-Garden+Uptown,,most price-sensitive robustness spec,,7175.1949,14350.3898,
-Garden+Uptown,,plausible bound (most price-sensitive),,4388.1733,8776.3466,
+branch,price_uplift,case,elasticity,delta_gp_6m (estimate),delta_gp_annual_flat (estimate),breakeven_unit_drop,breakeven_unit_drop_if_costs_at_uptown_level
+Garden,0.05,point estimate,-0.2537,4338.8713,8677.7425,0.0963,0.072
+Garden,0.05,most price-sensitive robustness spec,-0.5221,3675.2082,7350.4165,0.0963,0.072
+Garden,0.05,plausible bound (most price-sensitive),-0.9839,2553.4677,5106.9354,0.0963,0.072
+Uptown,0.0939,point estimate,-0.2537,4315.3681,8630.7361,0.1304,0.1304
+Uptown,0.0939,most price-sensitive robustness spec,-0.5221,3384.6027,6769.2053,0.1304,0.1304
+Uptown,0.0939,plausible bound (most price-sensitive),-0.9839,1834.7056,3669.4111,0.1304,0.1304
+Garden+Uptown,,point estimate,,8654.2393,17308.4787,,
+Garden+Uptown,,most price-sensitive robustness spec,,7059.8109,14119.6218,,
+Garden+Uptown,,plausible bound (most price-sensitive),,4388.1733,8776.3466,,

@@ -8,11 +8,11 @@
 | # | Decision | Value / year *(estimate)* | Confidence | First step this week |
 |---|---|---|---|---|
 | 1 | **Audit the branch cost rule before any pricing, menu or closure decision** | If avoidable purchase cost: up to $39k–$47k. If allocation: $0 cash, but corrected margins (§2) | Pattern: high. Recoverability: unknown (A1) | Ask finance what Garden's ×1.43 cost multiplier represents; then check 10 invoices |
-| 2 | **Re-price instead of discounting: drop blanket 15% promos; test Harbour's prices at Garden and Uptown** | ≈$9k–$17k from closing the price gap, plus ≈$0.7k from dropped promos (§3b) | Medium: price response measured on one promotion only | 4-week price test on 5 Uptown products, other branches as control |
+| 2 | **Re-price instead of discounting: drop blanket 15% promos; test Harbour's prices at Garden and Uptown** | ≈$9k at the cautious bound, up to ≈$17k (§3b); plus ≈$0.7k from dropped promos | Low–medium: one promotion with no measurable unit response | 4-week price test on 5 Uptown products, other branches as control |
 | 3 | **Pilot staffing to demand: Tuesday 20:00–23:00 up, Saturday down** | Not sized (no labour data); 07:00 illustration ≈$0.8k (§4) | Demand pattern: high, and rising with 52% growth. Understaffing: unproven | One-week queue and wait-time audit, then a 4-week shift pilot (§4b) |
 
 ## Conclusion
-In the data Stories provided, **four multipliers reproduce every branch price and unit cost to the cent.** Garden holds the master price list (Harbour charges ×1.05, Uptown ×0.96) and Harbour holds the master cost list (Garden pays ×1.43, Uptown ×0.96). So Garden sells at base prices while carrying a 43% cost premium. Against the cheapest cost base (Uptown), Garden and Harbour carry **$19.5k of excess cost in six months** *(measured)*, 10.9% of chain gross profit. Whether that cash is recoverable is **unknown**: up to $39k–$47k a year if it is an avoidable purchase cost *(estimate)*, or $0 if it is an accounting allocation. Even then, Garden's reported margins are distorted (desserts show 35.6% against 56.5% at Harbour), and decisions built on them would be wrong. **First action: ask finance one question: what does Garden's ×1.43 represent?** Separately, customers barely respond to price: a 15% discount lifted units by only about 4%. So Stories should re-price rather than discount; bringing Garden and Uptown up to Harbour's prices is worth **≈$9k–$17k a year** *(estimate; test first, §3b)*.
+In the data Stories provided, **four fixed multipliers link every branch's prices and unit costs to the cent.** Garden's price list looks like the master (all 45 prices end in 5¢; Harbour charges ×1.05, Uptown ×0.96), and unit costs are tied by fixed ratios (Garden ×1.43 and Uptown ×0.96 of Harbour's). So Garden sells at base prices while carrying a 43% cost premium. Against the cheapest cost base (Uptown), Garden and Harbour carry **$19.5k of excess cost in six months** *(measured)*, 10.9% of chain gross profit. Whether that cash is recoverable is **unknown**: up to $39k–$47k a year if it is an avoidable purchase cost *(estimate)*, or $0 if it is an accounting allocation. Even then, Garden's reported margins are distorted (desserts show 35.6% against 56.5% at Harbour), and decisions built on them would be wrong. **First action: ask finance one question: what does Garden's ×1.43 represent?** Separately, Harbour's 15% promotion produced no measurable unit response, so a price test is worth running: bringing Garden and Uptown up to Harbour's prices is worth about $9k a year even at the most price-sensitive reading the data allows *(estimate, §3b)*.
 
 > **Measured vs estimated.** *(measured)* numbers come directly from the data via `analysis/` (see the [Evidence index](#8-evidence-index)). Every $/year "value" is an *(estimate)* resting on the assumptions in [§5](#5-assumptions-and-how-they-change-the-answer).
 
@@ -43,11 +43,11 @@ Stories' data team already knows how many lattes each branch sells. We looked fo
 
 | | Price list | Unit-cost list |
 |---|---|---|
-| Garden | **Master**: all 45 prices end in 5¢, as hand-set prices often do | Harbour × **1.43** |
-| Harbour | Garden × **1.05** | **Master** |
+| Garden | **Likely master**: all 45 prices end in 5¢, as hand-set prices often do | Harbour × **1.43** |
+| Harbour | Garden × **1.05** | Reference (original unknown) |
 | Uptown | Garden × **0.96** | Harbour × **0.96** |
 
-Harbour's and Uptown's menu prices, such as a $5.41 brownie or a $4.94 cold brew, were not set item by item: they are conversions, and only 11% and 4% of them end in 5¢ (`outputs/f5_price_endings.csv`). This turns the audit into one question for finance: what does Garden's ×1.43 represent? The decoder (`decode_branch_rules()` in `analysis/f5_formula_and_pricing.py`) works on any multi-branch POS export. Run monthly, it would flag a changed multiplier or a product that breaks the rule.
+Harbour's and Uptown's menu prices, such as a $5.41 brownie or a $4.94 cold brew, were not set item by item: they are conversions, and only 11% and 4% of them end in 5¢ (`outputs/f5_price_endings.csv`). Rounding makes each mapping reversible (Garden's costs ÷ 1.43 rebuild Harbour's too), so for costs the data cannot say which list is the original; for prices, the 5¢ endings point to Garden. This turns the audit into one question for finance: what does Garden's ×1.43 represent? The decoder (`decode_branch_rules()` in `analysis/f5_formula_and_pricing.py`) works on any multi-branch POS export. Run monthly, it would flag a changed multiplier or a product that breaks the rule.
 
 **Scale cannot explain the costs.** Uptown is the smallest branch (39% of Harbour's transactions, `outputs/f4_branch_volume.csv`) yet has the cheapest unit costs. Harbour, the largest, pays 4% more. Volume discounts would produce the opposite order.
 
@@ -69,13 +69,7 @@ Harbour shows the same signature on a smaller scale: **1.036–1.050× Uptown on
 - **If the gap is a purchase price** (Garden's supplier or contract): move Garden, and then Harbour, onto Uptown's terms. That is worth $17.4k (Garden) + $2.1k (Harbour) = **$19.5k per 6 months**, or ≈$39k a year at flat volume and ≈$47k at the June run-rate *(estimates)*. Check quality and delivery reliability before switching.
 - **If it is an overhead allocation** (rent, generator power or management fees booked into unit cost): there is **$0 cash to recover**. But every product-level margin at Garden is distorted. For example, Garden's desserts *appear* to earn 35.6% against 56.5% at Harbour *(measured, `outputs/f1_category_mix_and_margin.csv`)* and would wrongly be cut. Move the allocation out of unit cost so menu and pricing decisions use true product margins.
 
-**Branch mix makes the audit more urgent at Garden** *(measured, stable in every month, `outputs/f4_branch_mix_index.csv`)*:
-- Desserts are 11.0% of Garden's lines, against 7.8% at Harbour and 6.9% at Uptown. That is 1.27× the chain share every month (range 1.18–1.33). Tiramisu, Frozen Yoghurt and Brownie each run about 1.31× the three-branch average share (`outputs/f4_product_mix_index.csv`).
-- Desserts are Garden's lowest-margin category at its current costs, so **start the invoice audit with dessert products**.
-- Uptown sells sandwiches at 1.41× the chain share every month (10.2% of lines vs 6.5%), led by Halloumi Wrap (1.38×). Action: test a lunch sandwich + drink bundle at Uptown.
-- These are associations: we cannot see *why* each branch's customers buy differently.
-
-**Pricing** follows from this formula and from the promotion's measured price response: see §3b.
+**Branch mix makes the audit more urgent at Garden** *(measured, stable in every month, `outputs/f4_branch_mix_index.csv`)*. Desserts are 11.0% of Garden's lines, against 7.8% at Harbour and 6.9% at Uptown, and they are Garden's lowest-margin category at its current costs, so **start the invoice audit with dessert products**. Uptown sells sandwiches at 1.41× the chain share (10.2% of lines vs 6.5%), which suggests testing a lunch sandwich + drink bundle there. These are associations, not causes.
 
 ## 3. F2: Harbour's 15% promotions did not pay for themselves
 **What the data shows** (`outputs/f2_facts.csv`, *measured*):
@@ -101,14 +95,16 @@ Harbour shows the same signature on a smaller scale: **1.036–1.050× Uptown on
 | March block only | +8.5% | −11.7% |
 | May block only | −0.1% | −22.0% |
 | Duplicate lines kept | +4.4% | −16.7% |
+| Matched days exclude public holidays | +4.8% | −16.2% |
+| March / May block, holidays excluded | +8.9% / +0.8% | −11.2% / −21.1% |
 | Pre-trend: the 7 days *before* each block | −3.3% | — |
 
-- **Units are the real test.** Promoted items earn a 66.1% margin at full price, so a 15% discount needs **+29.3% more units** to hold gross profit level. Every specification measures between −0.1% and +8.5%. From the main estimate (+4.2%), the true lift would have to be 25 points higher; random campaign-shaped blocks produce a difference that large less than 1% of the time (99th percentile +20.9%). Even from the most favourable specification (+8.5%), the gap of 21 points is at the edge of the 99th percentile. We read this as **strong evidence that these promotions did not pay for themselves, not a formal proof**. There were only two campaigns, the dates were not random, and the method assumes Harbour and the control branches would otherwise have moved together.
+- **Units are the real test.** Promoted items earn a 66.1% margin at full price, so a 15% discount needs **+29.3% more units** to hold gross profit level. Every specification measures between −0.1% and +8.9%. From the main estimate (+4.2%), the true lift would have to be 25 points higher; random campaign-shaped blocks produce a difference that large less than 1% of the time (99th percentile +20.9%). Even from the most favourable specification (+8.9%), the 20-point gap is beyond the 97.5th percentile of chance results (+17.3%). We read this as **strong evidence that these promotions did not pay for themselves, not a formal proof**. There were only two campaigns, the dates were not random, and the method assumes Harbour and the control branches would otherwise have moved together.
 - **Pre-trend:** in the week before each block, Harbour ran 3.3% below the control branches. That is small and within placebo noise. If the dip continued into the promo weeks, the true lift could be about 3 points higher than measured, which is still far short of +29%.
 - **The gross-profit drop is close to mechanical.** When units don't move, a 15% price cut on a 66%-margin item has to cut gross profit per unit by about 23%. The −16.9% (≈$367 over 16 days) follows from that; it is not a separate discovery.
 - No halo on other items and no extra transactions. In the 7 days after each block, promoted units ran 8.9% below matched days. That is a point estimate with no placebo test, so read it as a warning sign of pull-forward, not a result.
 - **Not proof of cause** (R10): the dates were not randomised. Harbour may have scheduled promotions for weeks it expected to be weak.
-- **Ramadan and Eid:** the March campaign ran in the last 8 days of Ramadan, right before Eid al-Fitr's dip (§4). A simple before/after comparison could confuse that calendar with the promotion; the control branches, which share the same calendar, absorb it.
+- **Holidays among the matched days:** March's comparison days include Eid al-Fitr (20–23 Mar), the Annunciation and Western Good Friday and Easter; May's include Labour Day, Liberation Day and Eid al-Adha (`outputs/f2_facts.csv`). Holiday effects differ by branch, so the control branches absorb them only partly. Excluding holidays changes little (+4.8% overall; March +8.9%, May +0.8%), so they do not explain the gap between the two blocks.
 - **The background 10% discount is untargeted** *(measured, `outputs/f5_background_discount.csv`)*: 5.4–5.8% of lines get it in every branch, daypart and customer type, loyalty or anonymous. It is not a loyalty reward or a happy hour. It cost $1,706 in six months, and nothing in the data shows what it is for; a POS reason code would.
 
 **Promotion approval rule** (reusable for any F&B promotion):
@@ -118,54 +114,34 @@ Harbour shows the same signature on a smaller scale: **1.036–1.050× Uptown on
 4. Roll out only if the measured lift beats the required lift and sits outside the campaign-shaped placebo range.
 5. Re-check the week after the promotion for pull-forward.
 
-## 3b. What the promotion reveals: re-price, don't discount
-The promotion is the only price experiment in the data. A 15% cut lifted units by about 4%: an implied price elasticity of **−0.25** *(measured, `outputs/f5_price_sensitivity.csv`)*. Across the robustness checks it ranges from 0 to −0.50, and inverting the placebo test puts the most price-sensitive value consistent with the data at about −0.98. Customers in this data barely react to price. That is why the discounts lost money, and it suggests the lower prices at Garden (4.8% below Harbour) and Uptown (8.6% below) give money away.
+## 3b. What the promotion suggests about price: test re-pricing
+The promotion is the only price change in the data, and it produced **no measurable unit response**: +4.2%, inside the chance range. Read as a price elasticity, that is about **−0.25** *(estimate, `outputs/f5_price_sensitivity.csv`)*: 0 to −0.52 across the robustness checks, and no more price-sensitive than about −0.98 by inverting the placebo test. If that holds for permanent prices, the lower prices at Garden (4.8% below Harbour) and Uptown (8.6% below) give money away.
 
 Raising Garden and Uptown to Harbour's prices *(estimates, `outputs/f5_pricing_scenarios.csv`)*:
 
 | Elasticity used | Garden (+5.0%), per 6 months | Uptown (+9.4%), per 6 months | Both, per year |
 |---|---:|---:|---:|
-| −0.25 (point estimate) | +$4.3k | +$4.3k | **≈$17k** |
-| −0.50 (most price-sensitive robustness check) | +$3.7k | +$3.5k | ≈$14k |
-| −0.98 (most price-sensitive value consistent with the data) | +$2.6k | +$1.8k | ≈$9k |
+| −0.98 (most price-sensitive value consistent with the data) | +$2.6k | +$1.8k | **≈$9k** |
+| −0.52 (most price-sensitive robustness check) | +$3.7k | +$3.4k | ≈$14k |
+| −0.25 (point estimate) | +$4.3k | +$4.3k | ≈$17k |
 
-- **Caveats:** the elasticity comes from a temporary discount on two categories at one branch. A permanent price rise can draw a stronger reaction, and Garden's and Uptown's customers may be more price-sensitive than Harbour's. At an elasticity of −2, Uptown's rise would lose money (`outputs/f4_price_harmonisation.csv`).
-- **Why harmonise rather than cut:** once all three branches charge the same, there is no cheaper Stories branch to switch to.
+- **Awareness, not just price:** the discount was applied to every unit at the till. If it was not advertised, customers could not respond to it, so this measures awareness as much as price sensitivity. The data cannot separate the two, which is why the price test below is required.
+- **Other caveats:** the elasticity comes from a temporary discount on two categories at one branch. A permanent price rise can draw a stronger reaction, and Garden's and Uptown's customers may be more price-sensitive than Harbour's. At an elasticity of −2, Uptown's rise would lose money (`outputs/f4_price_harmonisation.csv`).
+- **Why harmonise rather than cut** (reasoning, not measured): once all three branches charge the same, there is no cheaper Stories branch to switch to.
+- **Do not add this to Decision 1:** the values interact. If Garden's costs fell to Uptown's level, each lost unit would cost more, and Garden's break-even drop would shrink from 10% to 7% (`outputs/f5_pricing_scenarios.csv`). The values above assume today's costs.
 - **Test before rollout:** raise 5 products at Uptown to Harbour's prices for 4 weeks, with Garden and Harbour as controls, using the §3 method. Go if units fall by less than the break-even drop: 13% at Uptown, 10% at Garden.
 
 ## 4. F3: Demand shape and staffing (small section, by design)
 **Measured patterns** (`outputs/f4_daily_volume_by_weekday.csv`, `outputs/f4_tuesday_composition.csv`, `outputs/f4_opening_hours.csv`):
-- **Tuesday is pure extra traffic.** It averages 284.5 transactions a day chain-wide, against 178–197 on Monday and Wednesday–Friday. That is **+59%** against the average of Monday, Wednesday, Thursday, Friday and Sunday, and 1.61× the average of *all six* other days (Saturday included, which is why this ratio differs) in **every one of 25 weeks** (range 1.44–1.81). Yet Tuesday customers look the same as everyone else:
-
-  | | Average order | Items per order | Discounted lines | Known-customer lines | Takeaway lines | Lines 19–22h | Largest category gap |
-  |---|---:|---:|---:|---:|---:|---:|---:|
-  | Tuesday | $9.01 | 1.59 | 7.0% | 64.3% | 41.5% | 39.4% | |
-  | Other days | $9.00 | 1.59 | 6.5% | 63.2% | 40.7% | 39.2% | 0.5 pt |
-
-  This isn't a promotion or a different type of customer; it's more of the same customers. Stories should find out what drives Tuesday (a local event, a habit, a partner offer?) and try to copy it on the weakest day.
+- **Tuesday is pure extra traffic.** It averages 284.5 transactions a day chain-wide, against 178–197 on Monday and Wednesday–Friday: **+59%** against the average of Monday, Wednesday, Thursday, Friday and Sunday, and 1.61× all six other days in **every one of 25 weeks** (range 1.44–1.81). Tuesday customers look the same as everyone else: average order $9.01 vs $9.00, the same category mix (largest gap 0.5 pt), discount rate and loyalty share (`outputs/f4_tuesday_composition.csv`). It is more of the same customers, so Stories should find out what drives Tuesday and try to copy it on the weakest day.
 - **Over the six months, Tuesday 20:00–23:00 is the only block that may exceed one person's capacity** *(measured, `outputs/f4_tuesday_21h_load.csv`)*. Harbour averages 17.8 transactions in that hour (max 27), Garden 12.9 (max 19) and Uptown 6.2 (max 13). The typical branch-hour is 2–5. At the A7 midpoint of 15 transactions per staff-hour, Harbour's Tuesday 21:00 is the only slot whose *average* exceeds one person; Harbour's next-busiest slot is the hour right after, Tuesday 22:00 (13.5), and Tuesday 20:00 (11.7) is also in its top four (`outputs/f4_busiest_slots.csv`). So the crunch is a Tuesday 20:00–23:00 block, not one odd hour. On peak Tuesdays, Harbour (27) exceeds one person at any A7 value, and Garden (19) at anything below the top of the 10–20 range. This motivates a pilot, not a staffing change. The data has no schedules, queue lengths or service times, so A7 is an assumption and understaffing is not proven.
 - **Growth is pushing more hours toward that limit** *(measured, `outputs/f4_growth_capacity.csv`)*. With transactions up 52% from January to June, the number of branch-weekday-hour slots averaging 10 or more transactions an hour rose from **4 in January–February to 19 in June** (15 or more: from 1 to 2). Harbour's Tuesday 21:00 went from 15.1 to 22.2 an hour, and its Friday 21:00 from 8.9 to 15.5. Each June slot average rests on only 4–5 days, so read the trend, not the exact count. The capacity question is getting more pressing every month, which is why the pilot should start now.
 - **Evenings are a different business** *(measured, `outputs/f5_daypart_mix.csv`)*. 44% of all lines fall between 19:00 and 23:00, and 72% of those are dine-in, against 46% in the morning. The evening mix leans to iced coffee, matcha and desserts. Harbour's Tuesday 20:00–23:00 block is 71% dine-in. So the evening crunch is probably about seats and table turnover as much as the till, and the pilot should log table waits, not only the queue.
 - **Saturday is the weakest day:** 128.7 transactions a day, −28% against that same five-day average.
-- **Edge hours are thin.** Gross profit per day *(measured)*:
-
-  | Hour | Garden | Harbour | Uptown |
-  |---|---:|---:|---:|
-  | 07:00 | $5.47 | $11.29 | $4.37 |
-  | 23:00 | $12.99 | $27.21 | $10.05 |
-
+- **Edge hours are thin.** Gross profit per day *(measured)* is $4.37 (Uptown), $5.47 (Garden) and $11.29 (Harbour) at 07:00, and $10.05–$27.21 at 23:00.
   **Rule:** an hour pays for itself only if its gross profit exceeds that hour's labour + energy cost. In Lebanon that includes generator power, which we have no data on *(assumption)*. Opening Uptown at 07:00 makes sense only if the hour costs less than about **$4.4**; Garden needs under $5.5, and Harbour under $11.3. At 23:00 the thresholds are $10–$27. Staff-cost data would settle this in a day. The illustration in `outputs/f4_edge_hour_illustration.csv` assumes every 07:00 customer is lost. Some would come at 08:00 instead and keep their gross profit, so the true saving from closing is *higher*, and the $0.8k (at $6/hour) is a lower bound.
 
-- **The Lebanese calendar shows up in demand** *(measured, `outputs/f5_holiday_effects.csv`, `outputs/f5_holiday_test.csv`)*. We tested all 15 public-holiday dates in the window against the same weekday 1–3 weeks either side. Four fall outside the range that 95% of ordinary days fall in, against 0.75 expected by chance (binomial p = 0.005; approximate, since Eid days are consecutive):
-
-  | Day | Traffic vs matched days | By branch |
-  |---|---:|---|
-  | Eid al-Fitr, day 1 (20 Mar) | −15% | down at all three |
-  | Eid al-Fitr, day 2 (21 Mar) | −20% | down at all three |
-  | Good Friday, Western (3 Apr) | +20.5% | up at all three |
-  | Labour Day (1 May) | +20% | Harbour only (+53%) |
-
-  Eid days 3–4 were also below normal (−12%, −8%), within ordinary noise. Eid al-Adha, Orthodox Easter and the other holidays show no clear effect, and Ramadan did not change the daily rhythm. One year of data and provisional Islamic dates: treat this as a staffing and prep calendar to verify against 2025, not a rule.
+- **Two holiday dates stand out (to verify)** *(`outputs/f5_holiday_effects.csv`, `outputs/f5_holiday_test.csv`)*. Of 15 public holidays, three days fell outside the range of 95% of ordinary days with all three branches moving the same way: Eid al-Fitr's first two days (−15%, −20%) and Western Good Friday (+20.5%). Chance would produce about 0.7 such days (p ≈ 0.03). But the Eid days are consecutive, Labour Day's +20% came from Harbour alone, and this data shows no Ramadan rhythm or summer drink shift (§6), so these hits may be chance. Verify against 2025 before using them for staffing.
 
 **Forecast check (kept small).** We trained on January–May and tested on June. A seasonal-naive baseline was compared with a trend-adjusted baseline and a Poisson GLM (`outputs/f3_holdout_metrics.csv`). Branch-day error was 11.5% / 10.2% / 9.0% respectively; the GLM also removes the baseline's −7.5% bias, which comes from 52% growth over January–June. With only 2–5 transactions per branch-hour on average, simulated short-staffed hours in June were 15 / 13 / 12 (assumption A7). **A forecasting system is not worth building here.** A roster built on the stable weekly shape, reviewed monthly for growth, captures the value.
 
@@ -202,7 +178,7 @@ Each idea would only be worth pursuing if the data showed a gap to close (`outpu
 | A2 | The 132 identical lines ($741 of revenue) are double-logged | Margins change by under 0.1 pt; promo DiD +4.4% vs +4.2% (`outputs/f2_robustness.csv`) |
 | A3 | A blank Customer ID means a non-loyalty customer | Affects only the customer-based statistics |
 | A4 | Lebanese context (USD pricing, imported inputs, generator power) is background, not evidence; holiday dates come from published 2026 calendars (Islamic dates provisional) | Context is not used in any number; a wrong Eid date would weaken only the holiday finding |
-| A5 | Price elasticity is −0.25, measured from the Harbour promotion (bound −0.98); a permanent rise elsewhere may differ | At −2, Uptown's rise would lose money (`outputs/f4_price_harmonisation.csv`); hence a test before rollout |
+| A5 | Price elasticity is about −0.25, estimated from a promotion with no measurable unit response (bound −0.98); a permanent, advertised rise elsewhere may differ | At −2, Uptown's rise would lose money (`outputs/f4_price_harmonisation.csv`); hence a test before rollout |
 | A6 | Annual = 2× H1 at flat volume (budget case), or 12× June (run-rate; transactions grew 52% Jan→Jun) | Decision 1 value $39k (flat) to $47k (run-rate), Uptown basis |
 | A7 | One staff member handles 10–20 transactions an hour | Changes staffing counts only |
 
@@ -259,15 +235,15 @@ python analysis/check_readme_numbers.py   # consistency test: README headline nu
 | Harbour vs Uptown cost, and its saving | 1.036–1.050×, $2,115 / 6m | `outputs/f4_cost_ratio_vs_uptown.csv`, `outputs/f4_cost_benchmark.csv` → `Harbour,Uptown` |
 | Garden dessert margin vs Harbour | 35.6% vs 56.5% | `outputs/f1_category_mix_and_margin.csv` → `Desserts` |
 | Promo unit lift (DiD) and block-placebo range | +4.2%, −13.1…+17.3% (99th pct +20.9%) | `outputs/f2_did_results.csv` → `promoted units` |
-| Promo robustness range (units) | −0.1% … +8.5% | `outputs/f2_robustness.csv` |
+| Promo robustness range (units) | −0.1% … +8.9% | `outputs/f2_robustness.csv` |
 | Pre-trend (7 days before) | −3.3% | `outputs/f2_facts.csv` → `pre_promo_7d_promoted_units_did` |
 | Promo break-even lift | +29.3% | `outputs/f2_facts.csv` → `breakeven_unit_lift_for_15pct` |
-| Promo-implied price elasticity | −0.25 (robustness 0 to −0.50; bound −0.98) | `outputs/f5_price_sensitivity.csv` |
-| Price-gap value, Garden + Uptown, per year | ≈$17k / $14k / $9k (point / robust / bound) | `outputs/f5_pricing_scenarios.csv` → `Garden+Uptown` |
-| Break-even unit drop for the price rise | 10% Garden, 13% Uptown | `outputs/f5_pricing_scenarios.csv` → `breakeven_unit_drop` |
+| Promo-implied price elasticity *(estimate)* | −0.25 (robustness 0 to −0.52; bound −0.98) | `outputs/f5_price_sensitivity.csv` |
+| Price-gap value, Garden + Uptown, per year *(estimate)* | ≈$9k / $14k / $17k (bound / robust / point) | `outputs/f5_pricing_scenarios.csv` → `Garden+Uptown` |
+| Break-even unit drop for the price rise | 10% Garden (7% after a cost fix), 13% Uptown | `outputs/f5_pricing_scenarios.csv` → `breakeven_unit_drop` |
 | Untargeted 10% discount | 5.4–5.8% of lines in every segment; $1,706 / 6m | `outputs/f5_background_discount.csv` |
 | Evening dine-in share (19:00–23:00) | 72% (44% of all lines) | `outputs/f5_daypart_mix.csv` |
-| Holidays outside the ordinary-day range | 4 of 15 (0.75 expected; p = 0.005) | `outputs/f5_holiday_test.csv` |
+| Holidays standing out at all three branches | 3 of 15 (0.7 expected; p ≈ 0.03) | `outputs/f5_holiday_test.csv` |
 | Tuesday / Saturday daily transactions | 284.5 / 128.7 | `outputs/f4_daily_volume_by_weekday.csv` |
 | Tuesday ratio, every week | 1.44–1.81 (25 weeks) | `outputs/f3_hourly_volume_and_tuesday_ratio.csv` → last row |
 | 07:00 gross profit per day | $4.37–$11.29 | `outputs/f4_opening_hours.csv` → `hour=7` |

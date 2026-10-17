@@ -1,7 +1,7 @@
-field,branch,rule,multiplier,exact_cent_matches,n_products
-price,Garden,master list,1.0,45,45
-price,Harbour,Garden x 1.05,1.05,45,45
-price,Uptown,Garden x 0.96,0.96,45,45
-unit_cost,Harbour,master list,1.0,45,45
-unit_cost,Garden,Harbour x 1.43,1.43,45,45
-unit_cost,Uptown,Harbour x 0.96,0.96,45,45
+field,branch,rule,multiplier,exact_cent_matches,reverse_direction_matches,n_products
+price,Garden,reference list,1.0,45,,45
+price,Harbour,Garden x 1.05,1.05,45,45.0,45
+price,Uptown,Garden x 0.96,0.96,45,45.0,45
+unit_cost,Harbour,reference list,1.0,45,,45
+unit_cost,Garden,Harbour x 1.43,1.43,45,45.0,45
+unit_cost,Uptown,Harbour x 0.96,0.96,45,41.0,45

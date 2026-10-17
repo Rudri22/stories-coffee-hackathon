@@ -1,16 +1,16 @@
-date,weekday,holiday,ratio_all_branches,ratio_Harbour,ratio_Garden,ratio_Uptown,outside_ordinary_95pct_range
-2026-01-01,Thu,New Year's Day,1.093,1.29,1.014,0.776,False
-2026-01-06,Tue,Armenian Christmas,0.994,1.037,0.978,0.921,False
-2026-02-09,Mon,St Maroun's Day,1.05,1.419,0.799,0.655,False
-2026-03-20,Fri,Eid al-Fitr day 1,0.852,0.896,0.73,0.952,True
-2026-03-21,Sat,Eid al-Fitr day 2,0.799,0.82,0.914,0.566,True
-2026-03-22,Sun,Eid al-Fitr day 3,0.881,0.784,0.959,1.01,False
-2026-03-23,Mon,Eid al-Fitr day 4,0.916,1.03,0.799,0.845,False
-2026-03-25,Wed,Annunciation,0.964,0.909,0.988,1.065,False
-2026-04-03,Fri,Good Friday (Western),1.205,1.274,1.08,1.259,True
-2026-04-05,Sun,Easter Sunday (Western),1.046,0.977,1.084,1.162,False
-2026-04-10,Fri,Good Friday (Orthodox),1.0,1.095,1.047,0.696,False
-2026-04-12,Sun,Easter Sunday (Orthodox),0.896,0.825,1.03,0.864,False
-2026-05-01,Fri,Labour Day,1.201,1.533,0.92,0.905,True
-2026-05-25,Mon,Resistance and Liberation Day,0.972,0.921,0.947,1.165,False
-2026-05-27,Wed,Eid al-Adha,0.997,1.026,0.938,1.022,False
+date,weekday,holiday,ratio_all_branches,ratio_Harbour,ratio_Garden,ratio_Uptown,outside_ordinary_95pct_range,stands_out_at_all_three_branches
+2026-01-01,Thu,New Year's Day,1.093,1.29,1.014,0.776,False,False
+2026-01-06,Tue,Armenian Christmas,0.994,1.037,0.978,0.921,False,False
+2026-02-09,Mon,St Maroun's Day,1.05,1.419,0.799,0.655,False,False
+2026-03-20,Fri,Eid al-Fitr day 1,0.852,0.896,0.73,0.952,True,True
+2026-03-21,Sat,Eid al-Fitr day 2,0.799,0.82,0.914,0.566,True,True
+2026-03-22,Sun,Eid al-Fitr day 3,0.881,0.784,0.959,1.01,False,False
+2026-03-23,Mon,Eid al-Fitr day 4,0.916,1.03,0.799,0.845,False,False
+2026-03-25,Wed,Annunciation,0.964,0.909,0.988,1.065,False,False
+2026-04-03,Fri,Good Friday (Western),1.205,1.274,1.08,1.259,True,True
+2026-04-05,Sun,Easter Sunday (Western),1.046,0.977,1.084,1.162,False,False
+2026-04-10,Fri,Good Friday (Orthodox),1.0,1.095,1.047,0.696,False,False
+2026-04-12,Sun,Easter Sunday (Orthodox),0.896,0.825,1.03,0.864,False,False
+2026-05-01,Fri,Labour Day,1.201,1.533,0.92,0.905,True,False
+2026-05-25,Mon,Resistance and Liberation Day,0.972,0.921,0.947,1.165,False,False
+2026-05-27,Wed,Eid al-Adha,0.997,1.026,0.938,1.022,False,False
