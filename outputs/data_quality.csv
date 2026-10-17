@@ -13,3 +13,6 @@ txns_with_conflicting_header_fields,0
 product_branch_pairs_with_more_than_one_price,0
 product_branch_pairs_with_more_than_one_unit_cost,0
 negative_values,0
+txns_with_same_product_on_two_lines,34
+of_which_with_different_discounts,16
+share_consecutive_txn_ids_back_in_time,0.5

@@ -79,5 +79,9 @@ def data_quality_report() -> pd.DataFrame:
         "product_branch_pairs_with_more_than_one_price": int((raw.groupby(["product", "branch"])["price"].nunique() > 1).sum()),
         "product_branch_pairs_with_more_than_one_unit_cost": int((raw.groupby(["product", "branch"])["unit_cost"].nunique() > 1).sum()),
         "negative_values": int((raw[["qty", "price", "unit_cost", "revenue", "gross_profit"]] < 0).sum().sum()),
+        "txns_with_same_product_on_two_lines": int((raw[~dup].groupby(["txn", "product"]).size() > 1).sum()),
+        "of_which_with_different_discounts": int((raw[~dup].groupby(["txn", "product"]).discount.nunique() > 1).sum()),
+        "share_consecutive_txn_ids_back_in_time": round(float(
+            (raw.drop_duplicates("txn").assign(n=lambda d: d.txn.str[4:].astype(int)).sort_values("n").ts.diff().dt.total_seconds() < 0).mean()), 3),
     }
     return pd.DataFrame(list(checks.items()), columns=["check", "value"])

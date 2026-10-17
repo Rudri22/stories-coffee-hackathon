@@ -76,7 +76,7 @@ checks = {
 # Each checked value must also literally appear in the README (unicode minus allowed)
 literals = ["46.9%", "65.0%", "$19,485", "10.9%", "37.2%", "$39.0k", "$47.5k", "+4.2%", "16.9%", "+17.3%", "+20.9%", "+29.3%", "+8.5%",
             "from 15.1 to 22.2", "from 8.9 to 15.5", "4 in January–February to 19 in June", "35.6% against 56.5%",
-            "four fixed multipliers reproduce every price and cost to the cent", "once costs are compared like for like", "16 of Garden's 18-point margin gap", "$5.74 vs Uptown's $5.45", "worst branch on paper is its second-best", "46.9% to 64.4%", "**3 → 2**", "Harbour × **1.43**", "Garden × **1.05**",
+            "$5.74 vs Uptown's $5.45", "one cost rule, not how the branch is run", "explains 16 of the 18 points", "ask finance what Garden's ×1.43 is", "got about +4%", "50% of consecutive IDs", "**3 → 2**", "Harbour × **1.43**", "Garden × **1.05**",
             "**−0.25**", "about −0.98", "**≈$9k**", "≈$9k–$17k", "no measurable unit response", "from 10% to 7%", "+8.9%", "+4.8% overall", "13% at Uptown, 10% at Garden", "72% of those are dine-in",
             "(p ≈ 0.03)", "Reference (original unknown)", "$1,706"]
 for lit in literals:
