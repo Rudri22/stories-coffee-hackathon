@@ -1,0 +1,4 @@
+branch,margin_reported,gp_per_order_reported,total_gp_reported,margin_at_Uptown_costs,gp_per_order_at_Uptown_costs,margin_at_Harbour_costs,gp_per_order_at_Harbour_costs,rank_margin_reported,rank_gp_per_order_reported,rank_total_gp_reported,rank_margin_at_Uptown_costs,rank_gp_per_order_at_Uptown_costs,rank_margin_at_Harbour_costs,rank_gp_per_order_at_Harbour_costs
+Harbour,0.6496,5.9694,97503.46,0.6637,6.0988,0.6496,5.9694,1,1,1,1,1,1,1
+Garden,0.4692,4.1831,46696.16,0.6437,5.7392,0.6288,5.6063,3,3,2,2,2,2,2
+Uptown,0.6263,5.4452,34794.66,0.6263,5.4452,0.6106,5.3089,2,2,3,3,3,3,3

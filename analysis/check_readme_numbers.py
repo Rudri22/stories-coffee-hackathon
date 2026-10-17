@@ -26,6 +26,9 @@ dp = pd.read_csv(OUT / "f5_daypart_mix.csv", index_col=0)
 ht = f("f5_holiday_test.csv").iloc[0]
 bg = f("f5_background_discount.csv").set_index("segment").share_of_lines_with_10pct_discount
 rk = f("f5_equal_cost_ranking.csv").set_index("branch")
+sr = pd.read_csv(OUT / "stress_ranking.csv", index_col=0)
+sp = f("stress_placebo_seeds.csv")
+br = f("f1_margin_bridge.csv")
 
 checks = {
     "Garden margin 46.9%": f"{pnl.loc['Garden', 'gross_margin']:.1%}" == "46.9%",
@@ -62,13 +65,18 @@ checks = {
     "10% discount $1,706": round(bg["discount given, 6 months (USD)"]) == 1706,
     "equal-cost margins 66.4 / 64.4 / 62.6": [f"{rk.loc[b, 'margin_at_uptown_unit_costs']:.1%}" for b in ["Harbour", "Garden", "Uptown"]]
         == ["66.4%", "64.4%", "62.6%"],
+    "GP per order on equal costs: Garden $5.74 vs Uptown $5.45": (f"{sr.loc['Garden', 'gp_per_order_at_Uptown_costs']:.2f}",
+        f"{sr.loc['Uptown', 'gp_per_order_at_Uptown_costs']:.2f}") == ("5.74", "5.45"),
+    "Garden 2nd on every equal-cost metric": all(sr.loc["Garden", c] == 2 for c in sr.columns if c.startswith("rank_") and "_at_" in c),
+    "seed stability: max share reaching gap <= 0.4%": sp.share_placebos_reaching_gap.max() <= 0.004,
+    "16 of 18 margin points from cost": (round(-br.change_pts.iloc[-1]), round((br.gross_margin.iloc[0] - br.gross_margin.iloc[-1]) * 100)) == (16, 18),
     "ranks reported 1/3/2 -> equal costs 1/2/3": (list(rk.loc[["Harbour", "Garden", "Uptown"], "rank_reported"]),
                                                   list(rk.loc[["Harbour", "Garden", "Uptown"], "rank_at_equal_costs"])) == ([1, 3, 2], [1, 2, 3]),
 }
 # Each checked value must also literally appear in the README (unicode minus allowed)
 literals = ["46.9%", "65.0%", "$19,485", "10.9%", "37.2%", "$39.0k", "$47.5k", "+4.2%", "16.9%", "+17.3%", "+20.9%", "+29.3%", "+8.5%",
             "from 15.1 to 22.2", "from 8.9 to 15.5", "4 in January–February to 19 in June", "35.6% against 56.5%",
-            "four fixed multipliers reproduce every price and cost to the cent", "worst branch on paper is its second-best", "46.9% to 64.4%", "**3 → 2**", "Harbour × **1.43**", "Garden × **1.05**",
+            "four fixed multipliers reproduce every price and cost to the cent", "once costs are compared like for like", "16 of Garden's 18-point margin gap", "$5.74 vs Uptown's $5.45", "worst branch on paper is its second-best", "46.9% to 64.4%", "**3 → 2**", "Harbour × **1.43**", "Garden × **1.05**",
             "**−0.25**", "about −0.98", "**≈$9k**", "≈$9k–$17k", "no measurable unit response", "from 10% to 7%", "+8.9%", "+4.8% overall", "13% at Uptown, 10% at Garden", "72% of those are dine-in",
             "(p ≈ 0.03)", "Reference (original unknown)", "$1,706"]
 for lit in literals:

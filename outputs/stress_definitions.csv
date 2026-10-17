@@ -1,0 +1,7 @@
+data,branch,margin_net_of_discounts,margin_on_list_price
+duplicates removed,Harbour,0.6496,0.6526
+duplicates removed,Garden,0.4692,0.4721
+duplicates removed,Uptown,0.6263,0.6285
+duplicates kept,Harbour,0.6496,0.6526
+duplicates kept,Garden,0.4691,0.4721
+duplicates kept,Uptown,0.6263,0.6285

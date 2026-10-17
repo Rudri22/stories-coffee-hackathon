@@ -4,7 +4,21 @@ from pathlib import Path
 import pandas as pd
 
 ROOT = Path(__file__).resolve().parent.parent
-DATA = ROOT / "data" / "stories_transactions.csv"
+def _find_data() -> Path:
+    """data/stories_transactions.csv, else any stories*.csv in data/ or the repo root (e.g. 'stories_transactions (1).csv')."""
+    preferred = ROOT / "data" / "stories_transactions.csv"
+    if preferred.exists():
+        return preferred
+    for folder in (ROOT / "data", ROOT):
+        found = sorted(folder.glob("stories*.csv")) or sorted(folder.glob("*transactions*.csv"))
+        if found:
+            return found[0]
+    raise FileNotFoundError(
+        "Transaction CSV not found. Place the provided file at data/stories_transactions.csv "
+        f"(searched {ROOT / 'data'} and {ROOT} for stories*.csv / *transactions*.csv).")
+
+
+DATA = _find_data()
 OUT = ROOT / "outputs"
 OUT.mkdir(exist_ok=True)
 
