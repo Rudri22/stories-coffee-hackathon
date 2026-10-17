@@ -203,8 +203,24 @@ def pilot_power(df, threshold=-0.12, true_drop=-0.25):
     add("5 products pooled, 4 weeks", stats(pilot, 4), up.loc[pilot].sum().sum() / n_weeks * 4)
     add("5 products pooled, 8 weeks", stats(pilot, 8), up.loc[pilot].sum().sum() / n_weeks * 8)
     add("whole Uptown menu, 4 weeks", stats(menu, 4), up.sum().sum() / n_weeks * 4)
-    add("whole Uptown menu, 8 weeks", stats(menu, 8), up.sum().sum() / n_weeks * 8)
-    return pd.DataFrame(rows).round(4)
+    menu8 = stats(menu, 8)
+    add("whole Uptown menu, 8 weeks", menu8, up.sum().sum() / n_weeks * 8)
+    out = pd.DataFrame(rows)
+    i = out.index[out.design == "whole Uptown menu, 8 weeks"][0]
+    out.loc[i, ["min", "max", "mean"]] = [menu8.min(), menu8.max(), menu8.mean()]
+
+    # Decision rule "go only if Uptown's relative gross profit does not fall", applied to past 8-week windows:
+    # GP change = (1 + true unit response) * (m + u) / m * (1 + window noise) - 1, with Uptown's margin m and price rise u
+    s = df[df.branch == "Uptown"]
+    m = s.gross_profit.sum() / s.revenue.sum()
+    hp = df[df.branch == "Harbour"].groupby("product").price.first()
+    u = (s.qty * s["product"].map(hp) * (1 - s.discount)).sum() / s.revenue.sum() - 1
+    rule = []
+    for r in [0.0, -0.05, -0.08, -0.10, -0.16]:
+        true_gp = (1 + r) * (m + u) / m - 1
+        rule.append({"true_unit_response": r, "true_gp_change": true_gp,
+                     "share_of_past_windows_stopped": (((1 + true_gp) * (1 + menu8)) - 1 < 0).mean(), "windows": len(menu8)})
+    return out.round(4), pd.DataFrame(rule).round(4)
 
 
 def daypart_mix(df):
@@ -306,7 +322,8 @@ def main():
     sens = price_sensitivity(); sens.to_csv(OUT / "f5_price_sensitivity.csv", index=False)
     scen = pricing_scenarios(df, sens); scen.to_csv(OUT / "f5_pricing_scenarios.csv", index=False)
     pil = pilot_thresholds(df); pil.to_csv(OUT / "f5_pilot_thresholds.csv", index=False)
-    pw = pilot_power(df); pw.to_csv(OUT / "f5_pilot_power.csv", index=False)
+    pw, rule = pilot_power(df); pw.to_csv(OUT / "f5_pilot_power.csv", index=False)
+    rule.to_csv(OUT / "f5_pilot_decision_rule.csv", index=False)
     print("--- pilot power\n" + pw.to_string(index=False))
     print("--- pilot thresholds (range by branch, then pilot products at Uptown)")
     print(pil.groupby("branch").breakeven_unit_drop.agg(["min", "max"]).to_string())
