@@ -158,6 +158,44 @@ def mix_index(df):
     return summ, pidx.reset_index().sort_values("index_vs_branch_mean", ascending=False)
 
 
+def price_and_cost_factors(df):
+    """Per-product price and unit-cost ratios vs Harbour: if each is one constant per branch, the menu is a formula."""
+    u = unit_table(df)
+    rows = []
+    for b in ["Garden", "Uptown"]:
+        for k in ["price", "unit_cost"]:
+            r = u[(k, b)] / u[(k, "Harbour")]
+            rows.append({"branch": b, "field": k, "ratio_vs_harbour_min": r.min(), "ratio_vs_harbour_max": r.max(), "n_products": len(r)})
+    vol = df.groupby("branch").agg(lines=("txn", "size"), transactions=("txn", "nunique"))
+    vol["transactions_vs_harbour"] = vol.transactions / vol.loc["Harbour", "transactions"]
+    return pd.DataFrame(rows).round(4), vol.round(3)
+
+
+def peak_slot_load(df):
+    """Transactions per hour in the Tuesday 21:00 slot vs all other slots, per branch (compare with A7: 10-20 per staff)."""
+    tx = df.drop_duplicates("txn")
+    c = tx.groupby(["branch", "date", "weekday", "hour"]).size().rename("txns").reset_index()
+    idx = pd.MultiIndex.from_product([BRANCHES, sorted(df.date.unique()), range(7, 24)], names=["branch", "date", "hour"])
+    c = c.set_index(["branch", "date", "hour"]).txns.reindex(idx, fill_value=0).reset_index()
+    c["weekday"] = pd.to_datetime(c.date).dt.day_name().str[:3]
+    tue21 = c[(c.weekday == "Tue") & (c.hour == 21)].groupby("branch").txns.agg(["mean", "max"])
+    slot = c.groupby(["branch", "weekday", "hour"]).txns.mean()
+    best_other = slot.drop(index=[(b, "Tue", 21) for b in BRANCHES]).groupby("branch").max()
+    out = tue21.rename(columns={"mean": "tue_21h_mean", "max": "tue_21h_max"})
+    out["highest_mean_of_any_other_weekday_hour_slot"] = best_other
+    out["all_slots_mean"] = c.groupby("branch").txns.mean()
+    return out.round(2)
+
+
+def home_branch_share(df):
+    """Share of each known customer's visits made at their most-visited branch (tests the 'customers visit many branches' claim)."""
+    k = df.dropna(subset=["customer"]).drop_duplicates("txn")
+    v = k.groupby(["customer", "branch"]).size()
+    share = v.groupby("customer").max() / v.groupby("customer").sum()
+    return pd.DataFrame({"known_customers": [len(share)], "median_home_branch_share": [round(share.median(), 4)],
+                         "share_customers_2plus_branches": [round((v.groupby("customer").size() >= 2).mean(), 4)]})
+
+
 def main():
     df = load_clean()
     vc = value_context(df); vc.to_csv(OUT / "f4_value_context.csv", index=False)
@@ -167,6 +205,11 @@ def main():
     dw = daily_by_weekday(df); dw.to_csv(OUT / "f4_daily_volume_by_weekday.csv")
     oh, edge = opening_hours(df); oh.to_csv(OUT / "f4_opening_hours.csv")
     eh = edge_hour_illustration(df); eh.to_csv(OUT / "f4_edge_hour_illustration.csv", index=False)
+    pf, vol = price_and_cost_factors(df); pf.to_csv(OUT / "f4_price_and_cost_factors.csv", index=False); vol.to_csv(OUT / "f4_branch_volume.csv")
+    pk = peak_slot_load(df); pk.to_csv(OUT / "f4_tuesday_21h_load.csv")
+    hb = home_branch_share(df); hb.to_csv(OUT / "f4_home_branch_share.csv", index=False)
+    print("--- price/cost factors\n" + pf.to_string(index=False) + "\n" + vol.to_string())
+    print("--- Tuesday 21:00 load\n" + pk.to_string()); print("--- home branch\n" + hb.to_string(index=False))
     print("--- edge-hour illustration\n" + eh.to_string(index=False))
     mi, pi = mix_index(df); mi.to_csv(OUT / "f4_branch_mix_index.csv"); pi.to_csv(OUT / "f4_product_mix_index.csv", index=False)
 

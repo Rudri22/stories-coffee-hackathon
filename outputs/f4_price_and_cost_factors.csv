@@ -1,0 +1,5 @@
+branch,field,ratio_vs_harbour_min,ratio_vs_harbour_max,n_products
+Garden,price,0.9512,0.9532,45
+Garden,unit_cost,1.4261,1.4386,45
+Uptown,price,0.9122,0.9158,45
+Uptown,unit_cost,0.9524,0.9651,45
