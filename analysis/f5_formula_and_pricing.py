@@ -1,0 +1,223 @@
+"""F5: The branch formula decoded, what the promotion reveals about price sensitivity, and the demand calendar.
+
+Outputs (outputs/):
+  f5_branch_rules.csv          price and unit-cost lists: master branch, multiplier per branch, exact cent matches
+  f5_price_endings.csv         share of each branch's 45 prices ending in 5 cents (hand-set vs computed)
+  f5_price_sensitivity.csv     promo-implied price elasticity: point, robustness range, plausible bound
+  f5_pricing_scenarios.csv     ESTIMATED gross profit from raising Garden/Uptown prices to Harbour's at those elasticities
+  f5_daypart_mix.csv           takeaway and category share by time of day
+  f5_holiday_effects.csv       Lebanese public holidays 2026: traffic vs matched weekdays, all branches and per branch
+  f5_holiday_test.csv          how many holidays fall outside the range of ordinary days (binomial check)
+  f5_ramadan_profile.csv       hourly shape of demand before / during / after Ramadan 2026
+  f5_seasonality.csv           cold vs hot drink share by month
+  f5_background_discount.csv   who gets the 10% discount (targeting check)
+
+decode_branch_rules() is generic: it works on any multi-branch export with product, branch, price, unit_cost columns.
+"""
+import numpy as np
+import pandas as pd
+from scipy.stats import binom
+
+from common import BRANCHES, OUT, load_clean
+
+PROMO_RATE = 0.15
+GRID = np.round(np.arange(0.5, 2.0 + 1e-9, 0.0001), 4)
+
+# Lebanese public holidays in the data window. Islamic dates are provisional (moon sighting).
+HOLIDAYS_2026 = [
+    ("2026-01-01", "New Year's Day"), ("2026-01-06", "Armenian Christmas"), ("2026-02-09", "St Maroun's Day"),
+    ("2026-03-20", "Eid al-Fitr day 1"), ("2026-03-21", "Eid al-Fitr day 2"), ("2026-03-22", "Eid al-Fitr day 3"),
+    ("2026-03-23", "Eid al-Fitr day 4"), ("2026-03-25", "Annunciation"), ("2026-04-03", "Good Friday (Western)"),
+    ("2026-04-05", "Easter Sunday (Western)"), ("2026-04-10", "Good Friday (Orthodox)"),
+    ("2026-04-12", "Easter Sunday (Orthodox)"), ("2026-05-01", "Labour Day"),
+    ("2026-05-25", "Resistance and Liberation Day"), ("2026-05-27", "Eid al-Adha"),
+]
+RAMADAN = ("2026-02-18", "2026-03-19")
+
+
+def round_cents(x):
+    """Round half up to the cent, robust to float error."""
+    return np.floor(np.asarray(x) * 100 + 0.5 + 1e-9) / 100
+
+
+def best_factor(src, dst):
+    """Multiplier f maximising exact cent matches dst == round(src * f); prefers the 'cleanest' f (fewest decimals)."""
+    pred = round_cents(np.outer(GRID, src))
+    matches = (np.abs(pred - np.asarray(dst)) < 1e-6).sum(axis=1)
+    cands = GRID[matches == matches.max()]
+    for dec in (2, 3, 4):
+        clean = cands[np.isclose(cands, np.round(cands, dec))]
+        if len(clean):
+            return float(clean[np.argmin(np.abs(clean - np.median(cands)))]), int(matches.max())
+    return float(cands[0]), int(matches.max())
+
+
+def decode_branch_rules(df, fields=("price", "unit_cost")):
+    """For each field, find the master branch whose list reproduces the other branches' lists best via one multiplier."""
+    rows = []
+    for field in fields:
+        t = df.groupby(["product", "branch"])[field].first().unstack("branch").dropna()
+        branches = list(t.columns)
+        best = None
+        for anchor in branches:
+            fits = [(b, *best_factor(t[anchor].to_numpy(), t[b].to_numpy())) for b in branches if b != anchor]
+            total = sum(m for _, _, m in fits)
+            if best is None or total > best[0]:
+                best = (total, anchor, fits)
+        _, anchor, fits = best
+        rows.append({"field": field, "branch": anchor, "rule": "master list", "multiplier": 1.0,
+                     "exact_cent_matches": len(t), "n_products": len(t)})
+        for b, f, m in fits:
+            rows.append({"field": field, "branch": b, "rule": f"{anchor} x {f}", "multiplier": f,
+                         "exact_cent_matches": m, "n_products": len(t)})
+    return pd.DataFrame(rows)
+
+
+def price_endings(df):
+    p = df.groupby(["product", "branch"]).price.first().unstack("branch")
+    last = (p * 100).round().astype(int) % 10
+    return pd.DataFrame({"share_of_prices_ending_in_5_cents": (last == 5).mean(), "n_products": len(p)}).round(4)
+
+
+def price_sensitivity():
+    """Constant-elasticity reading of the Harbour promotion: Q ~ P^e, so e = ln(1 + lift) / ln(1 - 0.15)."""
+    did = pd.read_csv(OUT / "f2_did_results.csv").set_index("segment_metric").loc["promoted units"]
+    rob = pd.read_csv(OUT / "f2_robustness.csv")
+    e = lambda lift: np.log(1 + lift) / np.log(1 - PROMO_RATE)
+    lift = did["did"]
+    # Test inversion: lifts consistent with the observed DiD given the campaign-shaped placebo spread
+    lift_hi = lift - did["block_placebo_did_p2.5"]
+    lift_lo = lift - did["block_placebo_did_p97.5"]
+    rows = [
+        ("measured unit lift (DiD)", lift, e(lift)),
+        ("robustness: smallest lift", rob.promoted_units_did.min(), e(rob.promoted_units_did.min())),
+        ("robustness: largest lift", rob.promoted_units_did.max(), e(rob.promoted_units_did.max())),
+        ("plausible upper lift (test inversion, ~95%)", lift_hi, e(lift_hi)),
+        ("plausible lower lift (test inversion, ~95%)", lift_lo, e(lift_lo)),
+    ]
+    return pd.DataFrame(rows, columns=["reading", "unit_lift", "implied_elasticity"]).round(4)
+
+
+def pricing_scenarios(df, sens):
+    """Raise a branch's prices to Harbour's. Elasticities come from the promotion, not from an assumption sweep."""
+    u = df.groupby(["product", "branch"]).price.first().unstack("branch")
+    point = sens.set_index("reading").implied_elasticity
+    cases = [("point estimate", point["measured unit lift (DiD)"]),
+             ("most price-sensitive robustness spec", point["robustness: largest lift"]),
+             ("plausible bound (most price-sensitive)", point["plausible upper lift (test inversion, ~95%)"])]
+    rows = []
+    for b in ["Garden", "Uptown"]:
+        s = df[df.branch == b]
+        rev_h = (s.qty * s["product"].map(u["Harbour"]) * (1 - s.discount)).sum()
+        uplift = rev_h / s.revenue.sum() - 1
+        margin = s.gross_profit.sum() / s.revenue.sum()
+        breakeven_drop = 1 - margin / (margin + uplift)  # unit drop that leaves gross profit unchanged
+        for name, e in cases:
+            vol = (1 + uplift) ** e
+            d6 = rev_h * vol - s.cogs.sum() * vol - s.gross_profit.sum()
+            rows.append({"branch": b, "price_uplift": uplift, "case": name, "elasticity": e,
+                         "delta_gp_6m (estimate)": d6, "delta_gp_annual_flat (estimate)": 2 * d6,
+                         "breakeven_unit_drop": breakeven_drop})
+    out = pd.DataFrame(rows)
+    tot = out.groupby("case", sort=False)[["delta_gp_6m (estimate)", "delta_gp_annual_flat (estimate)"]].sum().reset_index()
+    tot.insert(0, "branch", "Garden+Uptown")
+    return pd.concat([out, tot], ignore_index=True).round(4)
+
+
+def daypart_mix(df):
+    band = pd.cut(df.hour, [6, 10, 14, 18, 24], labels=["07-10", "11-14", "15-18", "19-23"])
+    cat = df.groupby([band, "category"], observed=True).size().unstack()
+    out = cat.div(cat.sum(axis=1), axis=0)
+    out.insert(0, "takeaway_share", df.groupby(band, observed=True).order_type.apply(lambda s: (s == "Takeaway").mean()))
+    out.insert(1, "share_of_all_lines", df.groupby(band, observed=True).size() / len(df))
+    tue = df[(df.weekday == "Tue") & df.hour.between(20, 22) & (df.branch == "Harbour")]
+    out.loc["Harbour Tue 20-23h", "takeaway_share"] = (tue.order_type == "Takeaway").mean()
+    return out.round(4)
+
+
+def matched_ratio(series, day, excluded):
+    ctrl = [day + pd.Timedelta(weeks=k) for k in (-3, -2, -1, 1, 2, 3)]
+    ctrl = [c for c in ctrl if c in series.index and c not in excluded]
+    return series[day] / series[ctrl].mean() if len(ctrl) >= 3 else np.nan
+
+
+def holiday_effects(df):
+    tx = df.drop_duplicates("txn")
+    allb = tx.groupby("date").size()
+    perb = tx.groupby(["branch", "date"]).size()
+    hol = {pd.Timestamp(d): n for d, n in HOLIDAYS_2026}
+    excluded = set(hol)
+    null = np.array([matched_ratio(allb, d, excluded) for d in allb.index if d not in excluded])
+    null = null[~np.isnan(null)]
+    lo, hi = np.percentile(null, [2.5, 97.5])
+    rows = []
+    for d, name in hol.items():
+        r = {"date": d.date(), "weekday": d.day_name()[:3], "holiday": name,
+             "ratio_all_branches": matched_ratio(allb, d, excluded)}
+        for b in BRANCHES:
+            r[f"ratio_{b}"] = matched_ratio(perb.loc[b], d, excluded)
+        r["outside_ordinary_95pct_range"] = not (lo <= r["ratio_all_branches"] <= hi)
+        rows.append(r)
+    eff = pd.DataFrame(rows).round(3)
+    k, n = int(eff.outside_ordinary_95pct_range.sum()), len(eff)
+    test = pd.DataFrame([{"ordinary_day_ratio_p2.5": lo, "ordinary_day_ratio_p97.5": hi, "n_ordinary_days": len(null),
+                          "holidays_tested": n, "holidays_outside_range": k, "expected_by_chance": 0.05 * n,
+                          "binomial_p_at_least_k": binom.sf(k - 1, n, 0.05)}]).round(4)
+    return eff, test
+
+
+def ramadan_profile(df):
+    tx = df.drop_duplicates("txn")
+    win = {"4 weeks before": ("2026-01-21", "2026-02-17"), "Ramadan": RAMADAN, "4 weeks after": ("2026-03-21", "2026-04-17")}
+    cols = {}
+    for k, (a, b) in win.items():
+        w = tx[(tx.date >= a) & (tx.date <= b)]
+        cols[k] = w.groupby("hour").size() / len(w)
+        cols[k]["txns_per_day"] = len(w) / w.date.nunique()
+    out = pd.DataFrame(cols)
+    shares = out.drop(index="txns_per_day")
+    out.loc["max_abs_hour_share_gap_vs_before_after_avg_pts"] = [
+        np.nan, (shares["Ramadan"] - (shares["4 weeks before"] + shares["4 weeks after"]) / 2).abs().max() * 100, np.nan]
+    return out.round(4)
+
+
+def seasonality(df):
+    m = df.assign(month=df.date.dt.strftime("%Y-%m")).groupby("month")
+    return pd.DataFrame({"cold_drink_share (Cold Coffee + Cold Drinks)": m.category.apply(lambda s: s.isin(["Cold Coffee", "Cold Drinks"]).mean()),
+                         "hot_coffee_share": m.category.apply(lambda s: (s == "Hot Coffee").mean())}).round(4)
+
+
+def background_discount(df):
+    d = df.discount == 0.10
+    band = pd.cut(df.hour, [6, 10, 14, 18, 24], labels=["07-10", "11-14", "15-18", "19-23"])
+    rows = [("known customer", d[df.customer.notna()].mean()), ("anonymous", d[df.customer.isna()].mean())]
+    rows += [(f"branch {b}", d[df.branch == b].mean()) for b in BRANCHES]
+    rows += [(f"daypart {k}", v) for k, v in d.groupby(band, observed=True).mean().items()]
+    by_cat = d.groupby(df.category).mean()
+    rows += [("category min", by_cat.min()), ("category max", by_cat.max())]
+    rows += [("discount given, 6 months (USD)", (df.qty * df.price - df.revenue)[d].sum())]
+    return pd.DataFrame(rows, columns=["segment", "share_of_lines_with_10pct_discount"]).round(4)
+
+
+def main():
+    df = load_clean()
+    rules = decode_branch_rules(df); rules.to_csv(OUT / "f5_branch_rules.csv", index=False)
+    ends = price_endings(df); ends.to_csv(OUT / "f5_price_endings.csv")
+    sens = price_sensitivity(); sens.to_csv(OUT / "f5_price_sensitivity.csv", index=False)
+    scen = pricing_scenarios(df, sens); scen.to_csv(OUT / "f5_pricing_scenarios.csv", index=False)
+    dp = daypart_mix(df); dp.to_csv(OUT / "f5_daypart_mix.csv")
+    hol, test = holiday_effects(df); hol.to_csv(OUT / "f5_holiday_effects.csv", index=False); test.to_csv(OUT / "f5_holiday_test.csv", index=False)
+    ram = ramadan_profile(df); ram.to_csv(OUT / "f5_ramadan_profile.csv")
+    sea = seasonality(df); sea.to_csv(OUT / "f5_seasonality.csv")
+    bg = background_discount(df); bg.to_csv(OUT / "f5_background_discount.csv", index=False)
+
+    pd.set_option("display.width", 220)
+    for name, x in [("branch rules", rules), ("price endings", ends), ("price sensitivity", sens), ("pricing scenarios", scen),
+                    ("daypart (takeaway + share)", dp[["takeaway_share", "share_of_all_lines"]]), ("holidays", hol), ("holiday test", test),
+                    ("ramadan", ram.loc[["txns_per_day", "max_abs_hour_share_gap_vs_before_after_avg_pts"]]), ("seasonality", sea),
+                    ("background discount", bg)]:
+        print(f"--- {name}\n{x.to_string()}")
+
+
+if __name__ == "__main__":
+    main()

@@ -1,0 +1,13 @@
+segment,share_of_lines_with_10pct_discount
+known customer,0.0559
+anonymous,0.0562
+branch Harbour,0.0558
+branch Garden,0.055
+branch Uptown,0.0584
+daypart 07-10,0.0551
+daypart 11-14,0.0536
+daypart 15-18,0.0571
+daypart 19-23,0.0569
+category min,0.0419
+category max,0.059
+"discount given, 6 months (USD)",1705.91

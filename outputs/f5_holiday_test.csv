@@ -1,0 +1,2 @@
+ordinary_day_ratio_p2.5,ordinary_day_ratio_p97.5,n_ordinary_days,holidays_tested,holidays_outside_range,expected_by_chance,binomial_p_at_least_k
+0.8669,1.1796,166,15,4,0.75,0.0055
