@@ -1,0 +1,6 @@
+check,promoted_units_did,promoted_gp_did
+"main: matched weeks -3..+3, duplicates removed",0.0421,-0.1685
+matched weeks -4..-1 only (no post-promo weeks),0.0595,-0.1697
+block 1 only (2026-03-12..2026-03-19),0.0851,-0.1174
+block 2 only (2026-05-12..2026-05-19),-0.0009,-0.2195
+duplicates kept (raw data),0.044,-0.1671

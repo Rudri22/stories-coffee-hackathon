@@ -1,6 +1,6 @@
-segment_metric,harbour_change_vs_matched,control_change_vs_matched,did,harbour_total_actual,harbour_total_matched,placebo_did_p2.5,placebo_did_p97.5,share_placebo_as_extreme
-promoted units,-0.0326,-0.0748,0.0421,540.0,569.4333,-0.1345,0.1652,0.61
-promoted gp,-0.2474,-0.079,-0.1685,1604.03,2178.3653,-0.1507,0.1593,0.034
-other units,-0.0262,-0.0157,-0.0105,1857.0,1935.7333,-0.096,0.1109,0.852
-other gp,-0.0125,-0.0219,0.0094,7004.1,7205.4997,-0.1028,0.1114,0.876
-all txns,-0.0356,-0.0336,-0.002,1499.0,1564.5,-0.0814,0.0906,0.96
+segment_metric,harbour_change_vs_matched,control_change_vs_matched,did,harbour_total_actual,harbour_total_matched,block_placebo_did_p2.5,block_placebo_did_p97.5,block_placebo_did_p99,share_block_placebo_as_extreme,n_placebos
+promoted units,-0.0326,-0.0748,0.0421,540.0,569.4333,-0.1313,0.1735,0.2095,0.595,1000
+promoted gp,-0.2474,-0.079,-0.1685,1604.03,2178.3653,-0.1424,0.1792,0.2144,0.04,1000
+other units,-0.0262,-0.0157,-0.0105,1857.0,1935.7333,-0.0871,0.0811,0.1001,0.816,1000
+other gp,-0.0125,-0.0219,0.0094,7004.1,7205.4997,-0.0824,0.08,0.0913,0.827,1000
+all txns,-0.0356,-0.0336,-0.002,1499.0,1564.5,-0.0754,0.0768,0.0859,0.957,1000
