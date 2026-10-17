@@ -1,0 +1,9 @@
+check,value,z
+cross-month method on real data: days 1-5 minus rest,0.0754,3.5882
+"null simulation, monthly steps, no payday effect: mean diff",0.0563,
+"null simulation, monthly steps: 5th percentile",0.0149,
+"null simulation, monthly steps: 95th percentile",0.0999,
+"null simulation, monthly steps: share of runs with z >= real z",0.1167,
+"null simulation, smooth growth: mean diff",0.0004,
+"within-month, weekday-balanced: first week vs month average",0.0063,
+"regression (month x branch + weekday): days 1-5 effect, log points",0.0065,0.3791

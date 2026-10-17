@@ -330,6 +330,69 @@ def month_cycle(df):
     return pd.DataFrame(rows).round(4), by_day.round(4)
 
 
+def month_cycle_check(df, runs=300, seed=0):
+    """Is the start-of-month lift real, or an artefact of month-to-month growth steps? Three checks:
+    1) null simulation: daily chain transactions ~ Poisson(month level x weekday factor), both estimated from the data
+       (holidays excluded), no payday effect; apply month_cycle's exact statistic; 2) within-month, weekday-balanced
+       first-week share; 3) regression of log daily branch transactions on month x branch and weekday effects + days 1-5."""
+    hol = {pd.Timestamp(d) for d, _ in HOLIDAYS_2026}
+    t = df.drop_duplicates("txn")
+    day = t.groupby("date").size()
+    ok = day[~day.index.isin(hol)]
+    wk = ok.index.dayofweek
+    wf = (ok / ok.groupby(ok.index.month).transform("mean")).groupby(wk).mean()       # weekday factor
+    lvl = (ok / wf.reindex(wk).to_numpy()).groupby(ok.index.month).mean()             # month level
+    expected = lvl.reindex(day.index.month).to_numpy() * wf.reindex(day.index.dayofweek).to_numpy()
+
+    def stat(series):
+        out = {}
+        for d in series.index:
+            c = [d + pd.Timedelta(weeks=k) for k in (-3, -2, -1, 1, 2, 3)]
+            c = [x for x in c if x in series.index and x not in hol]
+            if len(c) == 6 and d not in hol:
+                out[d] = series[d] / series[c].mean()
+        r = pd.Series(out)
+        f, o = r[r.index.day <= 5], r[r.index.day > 5]
+        return f.mean() - o.mean(), (f.mean() - o.mean()) / np.sqrt(f.var() / len(f) + o.var() / len(o))
+
+    rng = np.random.default_rng(seed)
+    sims = np.array([stat(pd.Series(rng.poisson(expected), index=day.index)) for _ in range(runs)])
+    # smooth growth instead of monthly steps (log-linear trend), same weekday factors
+    tt = (day.index - day.index[0]).days.to_numpy()
+    b = np.polyfit(tt[~day.index.isin(hol)], np.log(ok / wf.reindex(wk).to_numpy()), 1)
+    smooth = np.exp(np.polyval(b, tt)) * wf.reindex(day.index.dayofweek).to_numpy()
+    sims_smooth = np.array([stat(pd.Series(rng.poisson(smooth), index=day.index)) for _ in range(runs)])
+    real = stat(day)
+
+    # within-month, weekday-balanced: each day vs its own month's mean for that weekday
+    mw = ok.groupby([ok.index.month, ok.index.dayofweek]).transform("mean")
+    rel = ok / mw
+    first_week = rel[rel.index.day <= 7].mean() - 1
+
+    # regression: log(branch-day txns) ~ month x branch + weekday + 1[day <= 5]
+    bd = t.groupby(["branch", "date"]).size().rename("n").reset_index()
+    bd = bd[~bd.date.isin(hol)]
+    X = pd.get_dummies(bd.branch + "_" + bd.date.dt.month.astype(str), dtype=float)
+    X = X.join(pd.get_dummies(bd.date.dt.dayofweek, prefix="wd", drop_first=True, dtype=float))
+    X["first5"] = (bd.date.dt.day <= 5).astype(float)
+    y = np.log(bd.n.to_numpy())
+    beta, *_ = np.linalg.lstsq(X.to_numpy(), y, rcond=None)
+    resid = y - X.to_numpy() @ beta
+    sigma2 = resid @ resid / (len(y) - X.shape[1])
+    se = np.sqrt(np.diag(sigma2 * np.linalg.pinv(X.to_numpy().T @ X.to_numpy())))
+    j = list(X.columns).index("first5")
+
+    rows = [("cross-month method on real data: days 1-5 minus rest", real[0], real[1]),
+            ("null simulation, monthly steps, no payday effect: mean diff", sims[:, 0].mean(), np.nan),
+            ("null simulation, monthly steps: 5th percentile", np.percentile(sims[:, 0], 5), np.nan),
+            ("null simulation, monthly steps: 95th percentile", np.percentile(sims[:, 0], 95), np.nan),
+            ("null simulation, monthly steps: share of runs with z >= real z", (sims[:, 1] >= real[1]).mean(), np.nan),
+            ("null simulation, smooth growth: mean diff", sims_smooth[:, 0].mean(), np.nan),
+            ("within-month, weekday-balanced: first week vs month average", first_week, np.nan),
+            ("regression (month x branch + weekday): days 1-5 effect, log points", beta[j], beta[j] / se[j])]
+    return pd.DataFrame(rows, columns=["check", "value", "z"]).round(4)
+
+
 def ramadan_profile(df):
     tx = df.drop_duplicates("txn")
     win = {"4 weeks before": ("2026-01-21", "2026-02-17"), "Ramadan": RAMADAN, "4 weeks after": ("2026-03-21", "2026-04-17")}
@@ -382,6 +445,7 @@ def main():
     hol, test = holiday_effects(df); hol.to_csv(OUT / "f5_holiday_effects.csv", index=False); test.to_csv(OUT / "f5_holiday_test.csv", index=False)
     ram = ramadan_profile(df); ram.to_csv(OUT / "f5_ramadan_profile.csv")
     mc, mcd = month_cycle(df); mc.to_csv(OUT / "f5_month_cycle.csv", index=False); mcd.to_csv(OUT / "f5_month_cycle_by_day.csv")
+    mcc = month_cycle_check(df); mcc.to_csv(OUT / "f5_month_cycle_check.csv", index=False)
     sea = seasonality(df); sea.to_csv(OUT / "f5_seasonality.csv")
     bg = background_discount(df); bg.to_csv(OUT / "f5_background_discount.csv", index=False)
 
