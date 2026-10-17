@@ -66,6 +66,27 @@ def decode_branch_rules(df, fields=("price", "unit_cost")):
     return pd.DataFrame(rows)
 
 
+def equal_cost_ranking(df):
+    """Gross margin per branch as reported vs with every branch on Uptown's (cheapest) unit costs, plus how alike the
+    branches behave (order value, takeaway share, food attach), to show whether rankings reflect operations or costing."""
+    cu = df[df.branch == "Uptown"].groupby("product").unit_cost.first()
+    tx = df.groupby(["branch", "txn"]).agg(rev=("revenue", "sum"), cats=("category", lambda c: set(c))).reset_index()
+    drinks = {"Hot Coffee", "Cold Coffee", "Matcha & Tea", "Cold Drinks"}
+    rows = []
+    for b in BRANCHES:
+        s = df[df.branch == b]
+        t = tx[tx.branch == b]
+        dr = t[t.cats.apply(lambda c: bool(c & drinks))]
+        rows.append({"branch": b, "margin_reported": s.gross_profit.sum() / s.revenue.sum(),
+                     "margin_at_uptown_unit_costs": 1 - (s.qty * s["product"].map(cu)).sum() / s.revenue.sum(),
+                     "avg_order_value": t.rev.mean(), "takeaway_share": (s.order_type == "Takeaway").mean(),
+                     "food_attach_on_drink_orders": dr.cats.apply(lambda c: bool(c - drinks)).mean()})
+    out = pd.DataFrame(rows)
+    out["rank_reported"] = out.margin_reported.rank(ascending=False).astype(int)
+    out["rank_at_equal_costs"] = out.margin_at_uptown_unit_costs.rank(ascending=False).astype(int)
+    return out.round(4)
+
+
 def price_endings(df):
     p = df.groupby(["product", "branch"]).price.first().unstack("branch")
     last = (p * 100).round().astype(int) % 10
@@ -215,6 +236,8 @@ def main():
     df = load_clean()
     rules = decode_branch_rules(df); rules.to_csv(OUT / "f5_branch_rules.csv", index=False)
     ends = price_endings(df); ends.to_csv(OUT / "f5_price_endings.csv")
+    rank = equal_cost_ranking(df); rank.to_csv(OUT / "f5_equal_cost_ranking.csv", index=False)
+    print("--- equal-cost ranking\n" + rank.to_string(index=False))
     sens = price_sensitivity(); sens.to_csv(OUT / "f5_price_sensitivity.csv", index=False)
     scen = pricing_scenarios(df, sens); scen.to_csv(OUT / "f5_pricing_scenarios.csv", index=False)
     dp = daypart_mix(df); dp.to_csv(OUT / "f5_daypart_mix.csv")

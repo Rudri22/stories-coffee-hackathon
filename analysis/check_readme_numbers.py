@@ -25,6 +25,7 @@ be = scen.drop_duplicates("branch").set_index("branch").breakeven_unit_drop
 dp = pd.read_csv(OUT / "f5_daypart_mix.csv", index_col=0)
 ht = f("f5_holiday_test.csv").iloc[0]
 bg = f("f5_background_discount.csv").set_index("segment").share_of_lines_with_10pct_discount
+rk = f("f5_equal_cost_ranking.csv").set_index("branch")
 
 checks = {
     "Garden margin 46.9%": f"{pnl.loc['Garden', 'gross_margin']:.1%}" == "46.9%",
@@ -59,11 +60,15 @@ checks = {
     "holidays 3 of 15 at all branches, p = 0.03": (int(ht.holidays_standing_out_all_branches), int(ht.holidays_tested),
                                                      f"{ht.binomial_p_at_least_k:.2f}", f"{ht.expected_by_chance:.1f}") == (3, 15, "0.03", "0.7"),
     "10% discount $1,706": round(bg["discount given, 6 months (USD)"]) == 1706,
+    "equal-cost margins 66.4 / 64.4 / 62.6": [f"{rk.loc[b, 'margin_at_uptown_unit_costs']:.1%}" for b in ["Harbour", "Garden", "Uptown"]]
+        == ["66.4%", "64.4%", "62.6%"],
+    "ranks reported 1/3/2 -> equal costs 1/2/3": (list(rk.loc[["Harbour", "Garden", "Uptown"], "rank_reported"]),
+                                                  list(rk.loc[["Harbour", "Garden", "Uptown"], "rank_at_equal_costs"])) == ([1, 3, 2], [1, 2, 3]),
 }
 # Each checked value must also literally appear in the README (unicode minus allowed)
 literals = ["46.9%", "65.0%", "$19,485", "10.9%", "37.2%", "$39.0k", "$47.5k", "+4.2%", "16.9%", "+17.3%", "+20.9%", "+29.3%", "+8.5%",
             "from 15.1 to 22.2", "from 8.9 to 15.5", "4 in January–February to 19 in June", "35.6% against 56.5%",
-            "four fixed multipliers link every branch's prices and unit costs to the cent", "Harbour × **1.43**", "Garden × **1.05**",
+            "four fixed multipliers reproduce every price and cost to the cent", "worst branch on paper is its second-best", "46.9% to 64.4%", "**3 → 2**", "Harbour × **1.43**", "Garden × **1.05**",
             "**−0.25**", "about −0.98", "**≈$9k**", "≈$9k–$17k", "no measurable unit response", "from 10% to 7%", "+8.9%", "+4.8% overall", "13% at Uptown, 10% at Garden", "72% of those are dine-in",
             "(p ≈ 0.03)", "Reference (original unknown)", "$1,706"]
 for lit in literals:

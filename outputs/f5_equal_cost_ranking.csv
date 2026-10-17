@@ -1,0 +1,4 @@
+branch,margin_reported,margin_at_uptown_unit_costs,avg_order_value,takeaway_share,food_attach_on_drink_orders,rank_reported,rank_at_equal_costs
+Harbour,0.6496,0.6637,9.1894,0.4097,0.4019,1,1
+Garden,0.4692,0.6437,8.9161,0.415,0.4175,3,2
+Uptown,0.6263,0.6263,8.6939,0.3943,0.4085,2,3

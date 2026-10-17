@@ -7,12 +7,12 @@
 ## CEO decisions
 | # | Decision | Value / year *(estimate)* | Confidence | First step this week |
 |---|---|---|---|---|
-| 1 | **Audit the branch cost rule before any pricing, menu or closure decision** | If avoidable purchase cost: up to $39k–$47k. If allocation: $0 cash, but corrected margins (§2) | Pattern: high. Recoverability: unknown (A1) | Ask finance what Garden's ×1.43 cost multiplier represents; then check 10 invoices |
+| 1 | **Stop judging Garden on reported margin until finance explains its ×1.43** | If avoidable purchase cost: up to $39k–$47k. If allocation: $0 cash, but corrected margins (§2) | Pattern: high. Recoverability: unknown (A1) | Ask finance what Garden's ×1.43 cost multiplier represents; then check 10 invoices |
 | 2 | **Re-price instead of discounting: drop blanket 15% promos; test Harbour's prices at Garden and Uptown** | ≈$9k at the cautious bound, up to ≈$17k (§3b); plus ≈$0.7k from dropped promos | Low–medium: one promotion with no measurable unit response | 4-week price test on 5 Uptown products, other branches as control |
 | 3 | **Pilot staffing to demand: Tuesday 20:00–23:00 up, Saturday down** | Not sized (no labour data); 07:00 illustration ≈$0.8k (§4) | Demand pattern: high, and rising with 52% growth. Understaffing: unproven | One-week queue and wait-time audit, then a 4-week shift pilot (§4b) |
 
 ## Conclusion
-In the data Stories provided, **four fixed multipliers link every branch's prices and unit costs to the cent.** Garden's price list looks like the master (all 45 prices end in 5¢; Harbour charges ×1.05, Uptown ×0.96), and unit costs are tied by fixed ratios (Garden ×1.43 and Uptown ×0.96 of Harbour's). So Garden sells at base prices while carrying a 43% cost premium. Against the cheapest cost base (Uptown), Garden and Harbour carry **$19.5k of excess cost in six months** *(measured)*, 10.9% of chain gross profit. Whether that cash is recoverable is **unknown**: up to $39k–$47k a year if it is an avoidable purchase cost *(estimate)*, or $0 if it is an accounting allocation. Even then, Garden's reported margins are distorted (desserts show 35.6% against 56.5% at Harbour), and decisions built on them would be wrong. **First action: ask finance one question: what does Garden's ×1.43 represent?** Separately, Harbour's 15% promotion produced no measurable unit response, so a price test is worth running: bringing Garden and Uptown up to Harbour's prices is worth about $9k a year even at the most price-sensitive reading the data allows *(estimate, §3b)*.
+**Stories' worst branch on paper is its second-best.** Put all three branches on the same unit costs and Garden's margin rises from 46.9% to 64.4%, above Uptown's 62.6% *(measured)*. In this data, branch rankings are set by a costing formula, not by how branches are run: four fixed multipliers reproduce every price and cost to the cent (Garden's unit costs are ×1.43 of Harbour's), while order values, takeaway shares, attach rates and hourly and weekday patterns are similar across branches. Against the cheapest cost base (Uptown), Garden and Harbour carry **$19.5k of excess cost in six months** *(measured)*, 10.9% of chain gross profit. Whether that cash is recoverable is **unknown**: up to $39k–$47k a year if it is an avoidable purchase cost *(estimate)*, or $0 if it is an accounting allocation. Even then, Garden's reported margins are distorted (desserts show 35.6% against 56.5% at Harbour), and decisions built on them would be wrong. **First action: ask finance one question: what does Garden's ×1.43 represent?** Separately, Harbour's 15% promotion produced no measurable unit response, so a price test is worth running: bringing Garden and Uptown up to Harbour's prices is worth about $9k a year even at the most price-sensitive reading the data allows *(estimate, §3b)*.
 
 > **Measured vs estimated.** *(measured)* numbers come directly from the data via `analysis/` (see the [Evidence index](#8-evidence-index)). Every $/year "value" is an *(estimate)* resting on the assumptions in [§5](#5-assumptions-and-how-they-change-the-answer).
 
@@ -22,11 +22,13 @@ In the data Stories provided, **four fixed multipliers link every branch's price
 Stories' data team already knows how many lattes each branch sells. We looked for what a sales dashboard does **not** show: why one branch earns far less per dollar sold, whether that is fixable, and whether current promotions and staffing match how customers actually behave.
 
 ## 2. F1: The cost rule behind Garden's margin (main finding)
-| Branch | Revenue *(measured)* | Gross profit *(measured)* | Gross margin | Unit cost vs Uptown, every product |
-|---|---:|---:|---:|---:|
-| Harbour | $150,099 | $97,503 | **65.0%** | 1.036–1.050× |
-| Garden | $99,531 | $46,696 | **46.9%** | 1.48–1.50× |
-| Uptown | $55,554 | $34,795 | **62.6%** | 1.00× (cheapest) |
+| Branch | Revenue *(measured)* | Gross profit *(measured)* | Gross margin, reported | Margin at Uptown's unit costs | Rank: reported → equal costs | Unit cost vs Uptown, every product |
+|---|---:|---:|---:|---:|---:|---:|
+| Harbour | $150,099 | $97,503 | **65.0%** | 66.4% | 1 → 1 | 1.036–1.050× |
+| Garden | $99,531 | $46,696 | **46.9%** | **64.4%** | **3 → 2** | 1.48–1.50× |
+| Uptown | $55,554 | $34,795 | **62.6%** | 62.6% | 2 → 3 | 1.00× (cheapest) |
+
+On equal costs Garden moves from last to second, and the remaining order simply follows the price multipliers below (Harbour ×1.05, Garden ×1.00, Uptown ×0.96). Otherwise the branches behave alike: order values $8.69–$9.19, takeaway 39–42%, food attached to 40–42% of drink orders (`outputs/f5_equal_cost_ranking.csv`).
 
 ![cost ratio](outputs/f1_cost_ratio_by_product.png)
 
@@ -217,6 +219,7 @@ python analysis/check_readme_numbers.py   # consistency test: README headline nu
 | Headline number | Value | File → row |
 |---|---|---|
 | Garden / Harbour gross margin | 46.9% / 65.0% | `outputs/f1_branch_pnl.csv` → `gross_margin` |
+| Margin at Uptown's unit costs: Harbour / Garden / Uptown | 66.4% / 64.4% / 62.6% (Garden rank 3 → 2) | `outputs/f5_equal_cost_ranking.csv` |
 | Garden / Harbour unit-cost ratio, by month | 1.4299–1.4301 | `outputs/f1_ratio_stability.csv` → `dimension=month` |
 | Cost effect in the margin bridge | −15.96 pts | `outputs/f1_margin_bridge.csv` → last row |
 | Excess cost vs Uptown's unit costs, 6 months (Garden + Harbour) | $17,370 + $2,115 = $19,485 | `outputs/f4_value_context.csv` → `UPTOWN_BASIS *_excess_6m` |
