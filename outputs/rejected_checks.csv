@@ -1,0 +1,11 @@
+check,segment,value
+food attach rate on drink orders,Harbour,0.4019
+food attach rate on drink orders,Garden,0.4175
+food attach rate on drink orders,Uptown,0.4085
+known customers,all,3494.0
+share of known customers with 2+ visits,all,0.9854
+share of known customers first seen in Jan-Feb,all,0.8077
+avg order value,Dine-in,9.01
+avg order value,Takeaway,9.0
+avg order value,anonymous,9.02
+avg order value,known customer,9.0

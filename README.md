@@ -5,7 +5,7 @@
 **Team members:** Rudy Abedulhadi · Karen El Helayel · Jad Faddoul
 
 ## Conclusion (one paragraph)
-**Garden loses about $16k of gross profit every six months (≈$32k a year at today's volume), and nearly all of it comes from a single cost rule, not from how the branch operates.** Garden's recorded unit cost is **1.430× Harbour's on every one of 45 products**. The ratio holds in every month, every category, and for both dine-in and takeaway. That pulls Garden's gross margin down to **46.9%**, against **65.0%** at Harbour and **62.6%** at Uptown. Product mix explains only 0.3 points of the 18-point gap and Garden's lower prices 1.8 points; **costs explain 16.0 points**. A multiplier this uniform does not look like waste, theft or spoilage. Those would vary by product perishability and over time. It points to one branch-level input: a supplier or distributor contract, or an overhead allocation booked into unit cost. **Recommended action:** before changing anything operational, Stories should audit how Garden's unit costs are produced, using 4 weeks of invoices for its top 10 products against Harbour's. If the gap is a real purchase price, move Garden onto Harbour's supply terms. Raising Garden's prices instead is worth at most ≈$10k a year, and nothing if demand is price-sensitive (elasticity −2). We also found that the March and May discount campaigns came with **−3.9% transactions** against matched days, and that a forecasting model beats a simple baseline by only a small margin. Both are secondary to the cost audit.
+**Garden loses about $16k of gross profit every six months (≈$32k a year at today's volume), and nearly all of it behaves like a single branch-level cost rule rather than an operational problem.** Garden's recorded unit cost is **1.430× Harbour's on every one of 45 products**. The ratio holds in every month, every category, and for both dine-in and takeaway. That pulls Garden's gross margin down to **46.9%**, against **65.0%** at Harbour and **62.6%** at Uptown. Product mix explains only 0.3 points of the 18-point gap and Garden's lower prices 1.8 points; **costs explain 16.0 points**. A multiplier this uniform does not look like waste, theft or spoilage. Those would vary by product perishability and over time. It points to one branch-level input: a supplier or distributor contract, or an overhead allocation booked into unit cost. **Recommended action:** before changing anything operational, Stories should audit how Garden's unit costs are produced, using 4 weeks of invoices for its top 10 products against Harbour's. If the gap is a real purchase price, move Garden onto Harbour's supply terms. Raising Garden's prices instead is worth at most ≈$10k a year, and nothing if demand is price-sensitive (elasticity −2). We also found that the March and May discount campaigns came with **−3.9% transactions** against matched days, and that a forecasting model beats a simple baseline by only a small margin. Both are secondary to the cost audit.
 
 > **Measured vs estimated.** Every number marked *(measured)* comes directly from the data via `analysis/`. Every $ "value" is an *(estimate)* resting on the assumptions in [§5](#5-assumptions-and-how-they-change-the-answer).
 
@@ -93,6 +93,8 @@ Target: transactions per branch per hour, 07:00–23:00. **Trained on January–
 | Branch-hour | 39.3% | **35.9%** | −7.5% | +0.4% |
 | Tuesdays (branch-hour) | 33.1% | 30.2% | −6.9% | +0.1% |
 
+We also tested a **trend-adjusted baseline**: the seasonal-naive forecast multiplied by each branch's growth over the last 4 training weeks. It reaches 10.2% branch-day WAPE with +0.7% bias, but it is worse at the hourly level (40.0%). Full results are in `outputs/f3_holdout_metrics.csv`.
+
 ![forecast](outputs/f3_forecast_and_heatmap.png)
 
 - **Measured patterns:**
@@ -100,11 +102,22 @@ Target: transactions per branch per hour, 07:00–23:00. **Trained on January–
   - The 21:00 hour alone carries 12.6% of all lines (`outputs/f3_hour_share_of_lines.csv`).
   - Monthly transactions grew 52% from January to June (`outputs/f3_monthly_transactions.csv`), at all three branches.
 - **Why the value is modest:**
-  - A branch sees only about 2–8 transactions an hour.
-  - The baseline's main error is that it lags the growth trend (−7.5% bias). The model fixes that.
-  - In a staffing simulation (assumption A7: one staff member per 15 transactions an hour), the model cut short-staffed hours in June from 15 to 12, at the cost of 9 extra staff-hours.
-  - **We do not recommend investing in a complex forecasting system.** A simple trend adjustment plus a fixed Tuesday and evening roster captures most of the benefit.
+  - A branch averages only 2.1 (Uptown) to 5.3 (Harbour) transactions an hour; the 90th percentile is 4–10 (`outputs/f3_hourly_volume_and_tuesday_ratio.csv`).
+  - The baseline's main error is that it lags the growth trend (−7.5% bias). The model fixes that, and the trend adjustment alone closes about half of the daily-error gap.
+  - In a staffing simulation (assumption A7: one staff member per 15 transactions an hour), short-staffed hours in June were 15 with the baseline, 13 with the trend adjustment and 12 with the model. The model plan cost 9 extra staff-hours (`outputs/f3_staffing_holdout.csv`).
+  - **We do not recommend investing in a complex forecasting system.** The measured gain over simple rules is a few staff-hours a month. A roster built on the stable Tuesday and 19:00–22:00 peaks, reviewed monthly for growth, is the practical version.
 - **Not tried, by design:** a gradient-boosted tree model. Trees cannot extrapolate a growth trend, and the trend is the main thing a forecast must capture here. This is a reasoned choice, not a tested result.
+
+## 4b. Approaches we considered and rejected
+Each idea below would only be worth pursuing if the data showed a gap to close. We measured it, and it didn't (`outputs/rejected_checks.csv`, via `analysis/rejected_checks.py`):
+
+| Idea | Measured | Why rejected |
+|---|---|---|
+| Cross-sell food with drinks at a lagging branch | Food attach rate on drink orders is 40.2% / 41.8% / 40.9% (Harbour / Garden / Uptown) | No branch lags, so there is no gap to close |
+| Churn prediction / win-back | 98.5% of known customers made 2+ visits | There is no churn problem in this window to model |
+| Push takeaway or dine-in for higher spend | Average order value: $9.01 dine-in vs $9.00 takeaway | No difference in spend |
+| Push loyalty sign-up for bigger baskets | Average order value: $9.00 known vs $9.02 anonymous | No basket difference (the loyalty programme may still have other value) |
+| A "query my database" chatbot | — | The brief says it earns no credit on its own |
 
 ## 5. Assumptions and how they change the answer
 | ID | Assumption | If it is wrong… |
@@ -137,6 +150,7 @@ python analysis/run_all.py      # rewrites every table and chart in outputs/ (~2
 | `analysis/common.py` | Loading, cleaning (de-duplication), data-quality checks → `outputs/data_quality.csv` |
 | `analysis/f1_garden_margin.py` | Branch P&L, unit ratios, margin bridge, alternative-explanation tests, value scenarios |
 | `analysis/f2_promotions.py` | Campaign detection, matched-day comparison, placebo test |
-| `analysis/f3_demand_forecast.py` | Baseline vs Poisson model, June holdout, staffing simulation |
+| `analysis/f3_demand_forecast.py` | Baselines vs Poisson model, June holdout, staffing simulation |
+| `analysis/rejected_checks.py` | Evidence for the rejected approaches in §4b |
 
 **Data quality** (`outputs/data_quality.csv`, measured): 51,177 lines and 33,887 transactions from 2026-01-01 to 2026-06-30. Revenue and gross profit reconcile on 100% of lines. No transaction has conflicting header fields. Each product has one price and one unit cost per branch for the whole period. 132 exact duplicate lines were removed. 36.5% of lines have no Customer ID.

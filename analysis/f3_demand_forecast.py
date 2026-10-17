@@ -37,6 +37,14 @@ def seasonal_naive(train, test):
     return test.join(last4, on=["branch", "weekday", "hour"])["pred"].to_numpy()
 
 
+def trend_adjusted_naive(train, test):
+    """Simple alternative to the model: seasonal naive x each branch's growth (last 28 train days / previous 28)."""
+    end = train.date.max()
+    last = train[train.date > end - pd.Timedelta(days=28)].groupby("branch").y.sum()
+    prev = train[(train.date <= end - pd.Timedelta(days=28)) & (train.date > end - pd.Timedelta(days=56))].groupby("branch").y.sum()
+    return seasonal_naive(train, test) * test.branch.map(last / prev).to_numpy()
+
+
 def design(p, enc=None):
     cat = pd.DataFrame({"bh": p.branch + "_" + p.hour.astype(str), "bw": p.branch + "_" + p.weekday})
     if enc is None:
@@ -80,10 +88,11 @@ def main():
     p = hourly_panel(df)
     train, test = p[p.date < SPLIT].copy(), p[p.date >= SPLIT].copy()
     test["baseline"] = seasonal_naive(train, test)
+    test["trend_adj_baseline"] = trend_adjusted_naive(train, test)
     test["model"] = glm(train, test)
 
     rows = []
-    for col in ["baseline", "model"]:
+    for col in ["baseline", "trend_adj_baseline", "model"]:
         rows.append(metrics(col, test.y.to_numpy(), test[col].to_numpy(), "branch-hour"))
         d = test.groupby(["branch", "date"])[["y", col]].sum()
         rows.append(metrics(col, d.y.to_numpy(), d[col].to_numpy(), "branch-day"))
@@ -96,13 +105,19 @@ def main():
 
     st = []
     for cap in [10, 15, 20]:
-        for col in ["baseline", "model"]:
+        for col in ["baseline", "trend_adj_baseline", "model"]:
             st.append({"txns_per_staff_hour (ASSUMPTION)": cap, "plan": col, **staffing(test, col, cap)})
     st = pd.DataFrame(st)
     st.to_csv(OUT / "f3_staffing_holdout.csv", index=False)
 
     wk, ratio = weekday_effect(p)
     wk.to_csv(OUT / "f3_weekly_by_weekday.csv")
+    branch_hour = p.groupby("branch").y.agg(["mean", lambda s: s.quantile(0.1), lambda s: s.quantile(0.9), "max"])
+    branch_hour.columns = ["mean", "p10", "p90", "max"]
+    pd.concat([branch_hour.round(2),
+               pd.DataFrame({"mean": [ratio.median()], "p10": [ratio.min()], "p90": [ratio.max()], "max": [len(ratio)]},
+                            index=["Tuesday/other-weekday ratio (median, min, max, n_weeks)"]).round(3)]
+              ).to_csv(OUT / "f3_hourly_volume_and_tuesday_ratio.csv")
     prof = p.groupby(["weekday", "hour"]).y.mean().unstack("hour").loc[DAYS].round(2)
     prof.to_csv(OUT / "f3_avg_txns_weekday_hour_all_branches.csv")
     monthly = p.assign(m=p.date.dt.strftime("%Y-%m")).groupby(["m", "branch"]).y.sum().unstack()[BRANCHES]
