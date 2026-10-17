@@ -3,3 +3,13 @@ __pycache__/
 *.pyc
 .DS_Store
 *.docx
+
+# Local workflow notes (not part of the submission)
+CLAUDE.md
+REQUIREMENTS.md
+PROGRESS.md
+EVALUATION.md
+HACKATHON_PLAYBOOK.md
+PROMPTS.md
+# Raw company data is not published; graders already have it
+data/*.csv

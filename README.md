@@ -1,6 +1,8 @@
 # Stories Coffee: Where the Margin Leaks
 
-**EECE490 Stories Coffee Hackathon · Team members:** _TEAM NAMES TO BE ADDED_
+**EECE490 Stories Coffee Hackathon**
+
+**Team members:** Rudy Abedulhadi · Karen El Helayel · Jad Faddoul
 
 ## Conclusion (one paragraph)
 **Garden loses about $16k of gross profit every six months (≈$32k a year at today's volume), and nearly all of it comes from a single cost rule, not from how the branch operates.** Garden's recorded unit cost is **1.430× Harbour's on every one of 45 products**. The ratio holds in every month, every category, and for both dine-in and takeaway. That pulls Garden's gross margin down to **46.9%**, against **65.0%** at Harbour and **62.6%** at Uptown. Product mix explains only 0.3 points of the 18-point gap and Garden's lower prices 1.8 points; **costs explain 16.0 points**. A multiplier this uniform does not look like waste, theft or spoilage. Those would vary by product perishability and over time. It points to one branch-level input: a supplier or distributor contract, or an overhead allocation booked into unit cost. **Recommended action:** before changing anything operational, Stories should audit how Garden's unit costs are produced, using 4 weeks of invoices for its top 10 products against Harbour's. If the gap is a real purchase price, move Garden onto Harbour's supply terms. Raising Garden's prices instead is worth at most ≈$10k a year, and nothing if demand is price-sensitive (elasticity −2). We also found that the March and May discount campaigns came with **−3.9% transactions** against matched days, and that a forecasting model beats a simple baseline by only a small margin. Both are secondary to the cost audit.
