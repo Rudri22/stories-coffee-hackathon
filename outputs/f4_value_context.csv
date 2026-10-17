@@ -8,3 +8,15 @@ excess_vs_harbour_as_pct_garden_gp,0.3402
 garden_june_cogs_vs_h1_monthly_avg,1.2145
 annual_value_flat_2xH1 (estimate),31775.0
 annual_value_june_run_rate (estimate),38590.95
+UPTOWN_BASIS garden_excess_6m (measured),17370.46
+UPTOWN_BASIS harbour_excess_6m (measured),2114.57
+UPTOWN_BASIS total_excess_6m (measured),19485.03
+UPTOWN_BASIS total_excess_june (measured),3960.21
+UPTOWN_BASIS total_as_pct_chain_gp,0.1089
+UPTOWN_BASIS garden_as_pct_garden_gp,0.372
+UPTOWN_BASIS annual_flat_2xH1 (estimate),38970.06
+UPTOWN_BASIS annual_june_run_rate_12xJune (estimate),47522.52
+UPTOWN_BASIS garden_annual_flat (estimate),34740.92
+UPTOWN_BASIS garden_annual_june_run_rate (estimate),42191.76
+UPTOWN_BASIS harbour_annual_flat (estimate),4229.14
+UPTOWN_BASIS harbour_annual_june_run_rate (estimate),5330.76

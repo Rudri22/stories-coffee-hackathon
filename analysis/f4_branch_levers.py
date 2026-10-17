@@ -42,7 +42,38 @@ def value_context(df):
         ("annual_value_flat_2xH1 (estimate)", 2 * excess_h),
         ("annual_value_june_run_rate (estimate)", 12 * excess_h / 6 * june_factor),
     ]
+    # Single benchmark used in the README: every branch re-priced at Uptown's (cheapest) unit costs
+    up = df["product"].map(u[("unit_cost", "Uptown")]) * df.qty
+    exc = (df.cogs - up).groupby(df.branch).sum()
+    exc_june = (df.cogs - up)[df.date.dt.month == 6].groupby(df.branch[df.date.dt.month == 6]).sum()
+    total6, june = exc["Garden"] + exc["Harbour"], exc_june["Garden"] + exc_june["Harbour"]
+    rows += [
+        ("UPTOWN_BASIS garden_excess_6m (measured)", exc["Garden"]),
+        ("UPTOWN_BASIS harbour_excess_6m (measured)", exc["Harbour"]),
+        ("UPTOWN_BASIS total_excess_6m (measured)", total6),
+        ("UPTOWN_BASIS total_excess_june (measured)", june),
+        ("UPTOWN_BASIS total_as_pct_chain_gp", total6 / chain_gp),
+        ("UPTOWN_BASIS garden_as_pct_garden_gp", exc["Garden"] / garden_gp),
+        ("UPTOWN_BASIS annual_flat_2xH1 (estimate)", 2 * total6),
+        ("UPTOWN_BASIS annual_june_run_rate_12xJune (estimate)", 12 * june),
+    ]
+    for b in ["Garden", "Harbour"]:
+        rows += [(f"UPTOWN_BASIS {b.lower()}_annual_flat (estimate)", 2 * exc[b]),
+                 (f"UPTOWN_BASIS {b.lower()}_annual_june_run_rate (estimate)", 12 * exc_june[b])]
     return pd.DataFrame(rows, columns=["item", "value"]).round(4)
+
+
+def edge_hour_illustration(df, hourly_costs=(4, 6, 8, 10)):
+    """ILLUSTRATIVE: yearly gross profit kept by closing 07:00 / 23:00 where the hour's GP < an ASSUMED hourly
+    labour+energy cost. Ignores any knock-on loss of customers who come at those hours (assumption)."""
+    days = df.date.nunique()
+    gp = df[df.hour.isin([7, 23])].groupby(["branch", "hour"]).gross_profit.sum() / days
+    rows = []
+    for c in hourly_costs:
+        loss = (c - gp).clip(lower=0)
+        rows.append({"assumed_cost_per_open_hour_usd": c, "hours_losing_money": ", ".join(f"{b} {h}:00" for (b, h), v in loss.items() if v > 0) or "none",
+                     "annual_saving_if_closed_usd (estimate)": round(loss.sum() * 365, 0)})
+    return pd.DataFrame(rows)
 
 
 def cost_benchmark(df):
@@ -135,6 +166,8 @@ def main():
     tc, tcat = tuesday_composition(df); tc.to_csv(OUT / "f4_tuesday_composition.csv"); tcat.to_csv(OUT / "f4_tuesday_category_mix.csv")
     dw = daily_by_weekday(df); dw.to_csv(OUT / "f4_daily_volume_by_weekday.csv")
     oh, edge = opening_hours(df); oh.to_csv(OUT / "f4_opening_hours.csv")
+    eh = edge_hour_illustration(df); eh.to_csv(OUT / "f4_edge_hour_illustration.csv", index=False)
+    print("--- edge-hour illustration\n" + eh.to_string(index=False))
     mi, pi = mix_index(df); mi.to_csv(OUT / "f4_branch_mix_index.csv"); pi.to_csv(OUT / "f4_product_mix_index.csv", index=False)
 
     pd.set_option("display.width", 220)

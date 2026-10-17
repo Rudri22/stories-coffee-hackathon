@@ -7,12 +7,12 @@
 ## CEO decisions
 | # | Decision | Value / year *(estimate)* | Confidence | First step this week |
 |---|---|---|---|---|
-| 1 | **Audit the unit-cost rule and benchmark every branch against the cheapest cost base (Uptown)** | **$32k–$39k** from Garden (vs Harbour's costs; flat volume to June run-rate) + $4k from Harbour (vs Uptown's), *if the gap is an avoidable purchase cost*. $0 cash if it is an accounting allocation, but then the menu and pricing decisions built on those margins are wrong | Gap: **high** (measured on every product and month). Recoverable share: **unknown** (assumption A1) | Finance explains how "Unit Cost" is set per branch; pull 4 weeks of invoices for the top 10 products, desserts first |
+| 1 | **Audit the unit-cost rule and benchmark every branch against the cheapest cost base (Uptown)** | **$39k (flat volume) to $47k (June run-rate)**: Garden $35k–$42k + Harbour $4k–$5k, all measured against Uptown's unit costs, *if the gap is an avoidable purchase cost*. $0 cash if it is an accounting allocation, but then the menu and pricing decisions built on those margins are wrong | Gap: **high** (measured on every product and month). Recoverable share: **unknown** (assumption A1) | Finance explains how "Unit Cost" is set per branch; pull 4 weeks of invoices for the top 10 products, desserts first |
 | 2 | **Stop blanket 15% category discounts; approve promotions only with the break-even rule (§3)** | Small: ≈$0.7k/yr at the current pace. The value is avoiding larger loss-making promotions | **High** that a lift big enough to pay for the 15% promo did not happen (ruled out at about the 95% level) | Run the next promotion at one branch for 2 weeks, with the other two as control |
-| 3 | **Staff to the demand shape: Tuesday +59%, Saturday −28%, thin 07:00 and 23:00 hours** | Not sized: there is no labour data | **High** on the pattern (every week); value depends on wage and generator cost | Move one shift from Saturday to Tuesday 19:00–22:00; record each branch's hourly labour + energy cost |
+| 3 | **Staff to the demand shape: Tuesday +59%, Saturday −28% (both vs the Mon/Wed/Thu/Fri/Sun average); review the thin 07:00 hour** | Illustrative only: if an open hour costs $6 in labour + generator power *(assumption)*, the 07:00 hour loses money at Garden and Uptown, and closing it saves ≈$0.8k/yr ($2.3k at $8/hour) | **High** on the pattern (every week); the $ depends entirely on the hourly-cost assumption | Move one shift from Saturday to Tuesday 19:00–22:00; record each branch's hourly labour + energy cost |
 
 ## Conclusion
-Garden's recorded unit cost is **1.430× Harbour's on every one of 45 products, and the monthly ratio never moves by more than ±0.0001**. That costs **$15.9k of gross profit in six months** *(measured)*, which is **8.9% of the chain's gross profit and 34% of Garden's**. Annualised, that is **$32k at flat volume, or $39k at Garden's June run-rate** *(estimates; we would budget $32k)*. A ratio this exact comes from a formula, not from waste or purchasing. So the first action is cheap: find the costing rule before changing operations. Our confidence that the gap exists is high; that the cash is recoverable, unknown.
+Garden's recorded unit cost is **1.430× Harbour's (1.49× Uptown's) on every one of 45 products, and the monthly ratio never moves by more than ±0.0001**. Measured against the cheapest cost base, Uptown, Garden and Harbour together carry **$19.5k of excess cost in six months** *(measured)*. That is **10.9% of the chain's gross profit**; Garden's share alone ($17.4k) is **37% of Garden's gross profit**. Annualised, that is **$39k at flat volume, or $47k at the June run-rate** *(estimates; we would budget $39k)*. A ratio this exact comes from a formula, not from waste or purchasing. So the first action is cheap: find the costing rule before changing operations. Our confidence that the gap exists is high; that the cash is recoverable, unknown.
 
 > **Measured vs estimated.** *(measured)* numbers come directly from the data via `analysis/` (see the [Evidence index](#8-evidence-index)). Every $/year "value" is an *(estimate)* resting on the assumptions in [§5](#5-assumptions-and-how-they-change-the-answer).
 
@@ -54,7 +54,7 @@ Stories' data team already knows how many lattes each branch sells. We looked fo
 Harbour shows the same signature on a smaller scale: **1.036–1.050× Uptown on every product** *(measured, `outputs/f4_cost_ratio_vs_uptown.csv`)*. So the benchmark should be the cheapest cost base, Uptown, not Harbour.
 
 **Decision tree for the audit** (sizes from `outputs/f4_cost_benchmark.csv`, 6-month *measured* gaps):
-- **If the gap is a purchase price** (Garden's supplier or contract): move Garden, and then Harbour, onto Uptown's terms. That is worth $17.4k (Garden) + $2.1k (Harbour) = **$19.5k per 6 months**, or ≈$39k a year at flat volume *(estimate)*. Check quality and delivery reliability before switching.
+- **If the gap is a purchase price** (Garden's supplier or contract): move Garden, and then Harbour, onto Uptown's terms. That is worth $17.4k (Garden) + $2.1k (Harbour) = **$19.5k per 6 months**, or ≈$39k a year at flat volume and ≈$47k at the June run-rate *(estimates)*. Check quality and delivery reliability before switching.
 - **If it is an overhead allocation** (rent, generator power or management fees booked into unit cost): there is **$0 cash to recover**. But every product-level margin at Garden is distorted. For example, Garden's desserts *appear* to earn 35.6% against 56.5% at Harbour *(measured, `outputs/f1_category_mix_and_margin.csv`)* and would wrongly be cut. Move the allocation out of unit cost so menu and pricing decisions use true product margins.
 
 **Branch mix makes the audit more urgent at Garden** *(measured, stable in every month, `outputs/f4_branch_mix_index.csv`)*:
@@ -101,7 +101,7 @@ Harbour shows the same signature on a smaller scale: **1.036–1.050× Uptown on
 
 ## 4. F3: Demand shape and staffing (small section, by design)
 **Measured patterns** (`outputs/f4_daily_volume_by_weekday.csv`, `outputs/f4_tuesday_composition.csv`, `outputs/f4_opening_hours.csv`):
-- **Tuesday is pure extra traffic.** It averages 284.5 transactions a day chain-wide, against 178–197 on Monday and Wednesday–Friday. That is **+59%** against the average of Monday, Wednesday, Thursday, Friday and Sunday, and 1.61× all other days in **every one of 25 weeks** (range 1.44–1.81). Yet Tuesday customers look the same as everyone else:
+- **Tuesday is pure extra traffic.** It averages 284.5 transactions a day chain-wide, against 178–197 on Monday and Wednesday–Friday. That is **+59%** against the average of Monday, Wednesday, Thursday, Friday and Sunday, and 1.61× the average of *all six* other days (Saturday included, which is why this ratio differs) in **every one of 25 weeks** (range 1.44–1.81). Yet Tuesday customers look the same as everyone else:
 
   | | Average order | Items per order | Discounted lines | Known-customer lines | Takeaway lines | Lines 19–22h | Largest category gap |
   |---|---:|---:|---:|---:|---:|---:|---:|
@@ -144,7 +144,7 @@ Each idea would only be worth pursuing if the data showed a gap to close (`outpu
 | A3 | A blank Customer ID means a non-loyalty customer | Affects only the customer-based statistics |
 | A4 | Lebanese context (USD pricing, imported inputs, generator power) is background, not evidence | Not used in any number |
 | A5 | Price elasticity is unknown, so we swept 0 to −2 | Price harmonisation ranges from +$5k to −$1.4k per 6 months |
-| A6 | Annual = 2× H1 at flat volume (budget case); June run-rate = 1.21× the H1 monthly average | Value $32k (flat) to $39k (run-rate) for Garden |
+| A6 | Annual = 2× H1 at flat volume (budget case), or 12× June (run-rate; transactions grew 52% Jan→Jun) | Decision 1 value $39k (flat) to $47k (run-rate), Uptown basis |
 | A7 | One staff member handles 10–20 transactions an hour | Changes staffing counts only |
 
 ## 6. Weak areas, uncertainty and missing information
@@ -179,9 +179,11 @@ python analysis/run_all.py      # rewrites every table and chart in outputs/ (~2
 | Garden / Harbour gross margin | 46.9% / 65.0% | `outputs/f1_branch_pnl.csv` → `gross_margin` |
 | Garden / Harbour unit-cost ratio, by month | 1.4299–1.4301 | `outputs/f1_ratio_stability.csv` → `dimension=month` |
 | Cost effect in the margin bridge | −15.96 pts | `outputs/f1_margin_bridge.csv` → last row |
-| Garden excess cost vs Harbour, 6 months | $15,888 | `outputs/f4_value_context.csv` → `garden_excess_cost_vs_harbour_6m` |
-| Share of chain / Garden gross profit | 8.9% / 34.0% | `outputs/f4_value_context.csv` → `excess_vs_harbour_as_pct_*` |
-| Annual value, flat / June run-rate | $31.8k / $38.6k | `outputs/f4_value_context.csv` → `annual_value_*` |
+| Excess cost vs Uptown's unit costs, 6 months (Garden + Harbour) | $17,370 + $2,115 = $19,485 | `outputs/f4_value_context.csv` → `UPTOWN_BASIS *_excess_6m` |
+| Share of chain GP (total) / Garden GP (Garden part) | 10.9% / 37.2% | `outputs/f4_value_context.csv` → `UPTOWN_BASIS *_as_pct_*` |
+| Annual value, flat / June run-rate | $39.0k / $47.5k | `outputs/f4_value_context.csv` → `UPTOWN_BASIS annual_*` |
+| Garden vs Harbour only (bridge basis), 6 months | $15,888 | `outputs/f4_value_context.csv` → `garden_excess_cost_vs_harbour_6m` |
+| Edge-hour illustration at $6 / $8 per open hour | ≈$0.8k / $2.3k a year | `outputs/f4_edge_hour_illustration.csv` |
 | Harbour vs Uptown cost, and its saving | 1.036–1.050×, $2,115 / 6m | `outputs/f4_cost_ratio_vs_uptown.csv`, `outputs/f4_cost_benchmark.csv` → `Harbour,Uptown` |
 | Garden dessert margin vs Harbour | 35.6% vs 56.5% | `outputs/f1_category_mix_and_margin.csv` → `Desserts` |
 | Promo unit lift (DiD) and placebo range | +4.2%, −13.5…+16.5% | `outputs/f2_did_results.csv` → `promoted units` |
