@@ -189,6 +189,25 @@ def peak_slot_load(df):
     return out.round(2)
 
 
+def growth_capacity(df):
+    """Does growth push more branch x weekday x hour slots past one person's capacity (A7: 10-20 txns/staff-hour)?
+    Compares mean transactions per slot in Jan-Feb with June."""
+    tx = df.drop_duplicates("txn")
+    c = tx.groupby(["branch", "date", "hour"]).size()
+    idx = pd.MultiIndex.from_product([BRANCHES, sorted(df.date.unique()), range(7, 24)], names=["branch", "date", "hour"])
+    c = c.reindex(idx, fill_value=0).rename("txns").reset_index()
+    c["weekday"] = pd.to_datetime(c.date).dt.day_name().str[:3]
+    m = pd.to_datetime(c.date).dt.month
+    c["period"] = np.select([m.isin([1, 2]), m == 6], ["Jan-Feb", "June"], "other")
+    slots = c[c.period != "other"].groupby(["period", "branch", "weekday", "hour"]).txns.mean().unstack("period").round(2)
+    summary = pd.DataFrame({
+        "slots_avg_ge_10": (slots >= 10).sum(), "slots_avg_ge_15": (slots >= 15).sum(),
+        "harbour_tue_21h": slots.loc[("Harbour", "Tue", 21)], "harbour_fri_21h": slots.loc[("Harbour", "Fri", 21)],
+        "garden_tue_21h": slots.loc[("Garden", "Tue", 21)],
+    }).T
+    return summary, slots[(slots >= 10).any(axis=1)].sort_values("June", ascending=False)
+
+
 def home_branch_share(df):
     """Share of each known customer's visits made at their most-visited branch (tests the 'customers visit many branches' claim)."""
     k = df.dropna(subset=["customer"]).drop_duplicates("txn")
@@ -210,6 +229,8 @@ def main():
     pf, vol = price_and_cost_factors(df); pf.to_csv(OUT / "f4_price_and_cost_factors.csv", index=False); vol.to_csv(OUT / "f4_branch_volume.csv")
     pk = peak_slot_load(df); pk.to_csv(OUT / "f4_tuesday_21h_load.csv")
     hb = home_branch_share(df); hb.to_csv(OUT / "f4_home_branch_share.csv", index=False)
+    gc, gslots = growth_capacity(df); gc.to_csv(OUT / "f4_growth_capacity.csv"); gslots.to_csv(OUT / "f4_growth_capacity_slots.csv")
+    print("--- growth vs capacity\n" + gc.to_string() + "\n" + gslots.head(8).to_string())
     print("--- price/cost factors\n" + pf.to_string(index=False) + "\n" + vol.to_string())
     print("--- Tuesday 21:00 load\n" + pk.to_string()); print("--- home branch\n" + hb.to_string(index=False))
     print("--- edge-hour illustration\n" + eh.to_string(index=False))
