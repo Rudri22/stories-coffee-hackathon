@@ -29,6 +29,7 @@ rk = f("f5_equal_cost_ranking.csv").set_index("branch")
 sr = pd.read_csv(OUT / "stress_ranking.csv", index_col=0)
 sp = f("stress_placebo_seeds.csv")
 br = f("f1_margin_bridge.csv")
+pil = f("f5_pilot_thresholds.csv")
 
 checks = {
     "Garden margin 46.9%": f"{pnl.loc['Garden', 'gross_margin']:.1%}" == "46.9%",
@@ -40,8 +41,8 @@ checks = {
     "$47.5k run-rate": f"{vc['UPTOWN_BASIS annual_june_run_rate_12xJune (estimate)'] / 1000:.1f}" == "47.5",
     "promo unit DiD +4.2%": f"{did.loc['promoted units', 'did']:+.1%}" == "+4.2%",
     "promo GP DiD -16.9%": f"{did.loc['promoted gp', 'did']:+.1%}" == "-16.9%",
-    "block placebo p97.5 +17.3%": f"{did.loc['promoted units', 'block_placebo_did_p97.5']:+.1%}" == "+17.3%",
-    "block placebo p99 +20.9%": f"{did.loc['promoted units', 'block_placebo_did_p99']:+.1%}" == "+20.9%",
+    "block placebo p97.5 +19.6%": f"{did.loc['promoted units', 'block_placebo_did_p97.5']:+.1%}" == "+19.6%",
+    "block placebo p99 +22.8%": f"{did.loc['promoted units', 'block_placebo_did_p99']:+.1%}" == "+22.8%",
     "break-even +29.3%": f"{float(facts['breakeven_unit_lift_for_15pct']):.1%}" == "29.3%",
     "robustness range -0.1..+8.9%": (f"{rob.promoted_units_did.min():+.1%}", f"{rob.promoted_units_did.max():+.1%}") == ("-0.1%", "+8.9%"),
     "holidays excluded: +4.8% overall, March +8.9%, May +0.8%": [f"{rob.set_index('check').promoted_units_did[k]:+.1%}" for k in [
@@ -53,10 +54,12 @@ checks = {
     "4 multipliers reproduce 45/45 each": (rules.exact_cent_matches == 45).all()
         and sorted(rules[rules.rule != "reference list"].multiplier.round(2)) == [0.96, 0.96, 1.05, 1.43],
     "price endings 100% / 11% / 4%": [f"{ends[b]:.0%}" for b in ["Garden", "Harbour", "Uptown"]] == ["100%", "11%", "4%"],
-    "elasticity -0.25 / -0.52 / -0.98": [f"{sens[k]:.2f}" for k in ["measured unit lift (DiD)", "robustness: largest lift",
-                                         "plausible upper lift (test inversion, ~95%)"]] == ["-0.25", "-0.52", "-0.98"],
-    "price-gap value 17k / 14k / 9k": [round(tot[k] / 1000) for k in ["point estimate", "most price-sensitive robustness spec",
-                                      "plausible bound (most price-sensitive)"]] == [17, 14, 9],
+    "elasticity -0.25 / -0.52 / -1.04": [f"{sens[k]:.2f}" for k in ["measured unit lift (DiD)", "robustness: largest lift",
+                                         "plausible upper lift (test inversion, ~95%)"]] == ["-0.25", "-0.52", "-1.04"],
+    "price-gap value 17k / 14k / 8k / -2k": [round(tot[k] / 1000) for k in ["point estimate", "most price-sensitive robustness spec",
+                                      "plausible bound (most price-sensitive)", "stress: elasticity -2.0 (not measured)"]] == [17, 14, 8, -2],
+    "pilot thresholds 11.4-12.8% (menu 10.1-15.7%)": (lambda u: (f"{u[u.in_pilot].breakeven_unit_drop.min():.1%}", f"{u[u.in_pilot].breakeven_unit_drop.max():.1%}",
+        f"{u.breakeven_unit_drop.min():.1%}", f"{u.breakeven_unit_drop.max():.1%}"))(pil[pil.branch == "Uptown"]) == ("11.4%", "12.8%", "10.1%", "15.7%"),
     "break-even drop 10% Garden, 13% Uptown": (f"{be['Garden']:.0%}", f"{be['Uptown']:.0%}") == ("10%", "13%"),
     "Garden break-even after cost fix 7%": f"{scen[scen.branch == 'Garden'].breakeven_unit_drop_if_costs_at_uptown_level.iloc[0]:.0%}" == "7%",
     "evening dine-in 72%, 44% of lines": (f"{1 - dp.loc['19-23', 'takeaway_share']:.0%}", f"{dp.loc['19-23', 'share_of_all_lines']:.0%}") == ("72%", "44%"),
@@ -68,16 +71,16 @@ checks = {
     "GP per order on equal costs: Garden $5.74 vs Uptown $5.45": (f"{sr.loc['Garden', 'gp_per_order_at_Uptown_costs']:.2f}",
         f"{sr.loc['Uptown', 'gp_per_order_at_Uptown_costs']:.2f}") == ("5.74", "5.45"),
     "Garden 2nd on every equal-cost metric": all(sr.loc["Garden", c] == 2 for c in sr.columns if c.startswith("rank_") and "_at_" in c),
-    "seed stability: max share reaching gap <= 0.4%": sp.share_placebos_reaching_gap.max() <= 0.004,
+    "seed stability: share reaching gap under 1%": sp.share_placebos_reaching_gap.max() < 0.01,
     "16 of 18 margin points from cost": (round(-br.change_pts.iloc[-1]), round((br.gross_margin.iloc[0] - br.gross_margin.iloc[-1]) * 100)) == (16, 18),
     "ranks reported 1/3/2 -> equal costs 1/2/3": (list(rk.loc[["Harbour", "Garden", "Uptown"], "rank_reported"]),
                                                   list(rk.loc[["Harbour", "Garden", "Uptown"], "rank_at_equal_costs"])) == ([1, 3, 2], [1, 2, 3]),
 }
 # Each checked value must also literally appear in the README (unicode minus allowed)
-literals = ["46.9%", "65.0%", "$19,485", "10.9%", "37.2%", "$39.0k", "$47.5k", "+4.2%", "16.9%", "+17.3%", "+20.9%", "+29.3%", "+8.5%",
+literals = ["46.9%", "65.0%", "$19,485", "10.9%", "37.2%", "$39.0k", "$47.5k", "+4.2%", "16.9%", "+19.6%", "+22.8%", "+29.3%", "+8.5%",
             "from 15.1 to 22.2", "from 8.9 to 15.5", "4 in January–February to 19 in June", "35.6% against 56.5%",
-            "$5.74 vs Uptown's $5.45", "one cost rule, not how the branch is run", "explains 16 of the 18 points", "ask finance what Garden's ×1.43 is", "got about +4%", "50% of consecutive IDs", "**3 → 2**", "Harbour × **1.43**", "Garden × **1.05**",
-            "**−0.25**", "about −0.98", "**≈$9k**", "≈$9k–$17k", "no measurable unit response", "from 10% to 7%", "+8.9%", "+4.8% overall", "13% at Uptown, 10% at Garden", "72% of those are dine-in",
+            "$5.74 vs Uptown's $5.45", "one recorded cost rule", "explains 16 of the 18 points", "ask finance what Garden's ×1.43 is", "got about +4%", "50% of consecutive IDs", "**3 → 2**", "Harbour × **1.43**", "Garden × **1.05**",
+            "**−0.25**", "about −1.04", "**≈−$2k**", "its own** break-even drop", "11.4%–12.8%", "conditional scenarios, not forecasts", "no measurable unit response", "from 10% to 7%", "+8.9%", "+4.8% overall", "72% of those are dine-in",
             "(p ≈ 0.03)", "Reference (original unknown)", "$1,706"]
 for lit in literals:
     checks[f"README mentions {lit}"] = lit in readme

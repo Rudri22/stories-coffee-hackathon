@@ -1,0 +1,91 @@
+branch,product,price_rise,unit_margin,breakeven_unit_drop,in_pilot
+Garden,Almond Croissant,0.0495,0.4371,0.1017,False
+Garden,Americano,0.0508,0.673,0.0702,False
+Garden,Avocado Toast,0.0497,0.3672,0.1193,False
+Garden,Banana Bread,0.0494,0.4944,0.0909,False
+Garden,Blueberry Muffin,0.0506,0.5266,0.0877,False
+Garden,Brownie,0.0505,0.3417,0.1287,False
+Garden,Butter Croissant,0.0493,0.5534,0.0818,True
+Garden,Cappuccino,0.0494,0.6049,0.0755,True
+Garden,Caramel Latte,0.0504,0.5357,0.0861,False
+Garden,Chai Latte,0.0495,0.5962,0.0767,False
+Garden,Cheesecake Slice,0.0504,0.3481,0.1264,False
+Garden,Chicken Pesto Sandwich,0.0502,0.3126,0.1385,False
+Garden,Chicken Salad Bowl,0.0498,0.351,0.1242,False
+Garden,Chocolate Cookie,0.0508,0.5873,0.0796,False
+Garden,Chocolate Croissant,0.0494,0.4682,0.0955,False
+Garden,Cinnamon Roll,0.0505,0.3786,0.1176,False
+Garden,Classic Matcha,0.0496,0.4961,0.0909,True
+Garden,Coffee Frappe,0.0504,0.4473,0.1012,False
+Garden,Cold Brew,0.0505,0.6777,0.0693,False
+Garden,Egg Sandwich,0.0503,0.454,0.0998,False
+Garden,English Breakfast Tea,0.0493,0.7623,0.0607,False
+Garden,Espresso,0.0491,0.6491,0.0703,False
+Garden,Flat White,0.0506,0.5931,0.0786,False
+Garden,Fresh Orange Juice,0.0504,0.473,0.0963,False
+Garden,Frozen Yoghurt Cup,0.0504,0.374,0.1188,False
+Garden,Granola Yoghurt,0.0497,0.3949,0.1117,False
+Garden,Halloumi Wrap,0.0503,0.405,0.1104,False
+Garden,Iced Americano,0.0494,0.6805,0.0676,False
+Garden,Iced Latte,0.0505,0.557,0.0831,True
+Garden,Iced Matcha,0.0496,0.4759,0.0944,True
+Garden,Iced Mocha,0.0496,0.4896,0.092,False
+Garden,Lemonade,0.0495,0.6409,0.0717,False
+Garden,Mint Tea,0.0493,0.7534,0.0614,False
+Garden,Peach Iced Tea,0.0494,0.6315,0.0726,False
+Garden,Pistachio Cookie,0.0493,0.5101,0.0881,False
+Garden,Quinoa Bowl,0.0498,0.3957,0.1118,False
+Garden,Soup of the Day,0.0503,0.442,0.1023,False
+Garden,Spanish Latte,0.0504,0.5244,0.0877,False
+Garden,Sparkling Water,0.0509,0.2982,0.1458,False
+Garden,Still Water,0.0513,0.5231,0.0893,False
+Garden,Strawberry Matcha,0.0497,0.4052,0.1092,False
+Garden,Tiramisu Cup,0.0504,0.3771,0.1179,False
+Garden,Tuna Sandwich,0.0497,0.3977,0.1111,False
+Garden,Turkey & Cheese Sandwich,0.0497,0.3005,0.142,False
+Garden,Vanilla Latte,0.0495,0.5486,0.0828,False
+Uptown,Almond Croissant,0.0923,0.6073,0.1319,False
+Uptown,Americano,0.096,0.7715,0.1107,False
+Uptown,Avocado Toast,0.0937,0.5579,0.1438,False
+Uptown,Banana Bread,0.0937,0.6464,0.1266,False
+Uptown,Blueberry Muffin,0.095,0.6675,0.1246,False
+Uptown,Brownie,0.0951,0.5385,0.1502,False
+Uptown,Butter Croissant,0.0943,0.6886,0.1204,True
+Uptown,Cappuccino,0.0925,0.7224,0.1136,True
+Uptown,Caramel Latte,0.0942,0.6739,0.1226,False
+Uptown,Chai Latte,0.0933,0.7183,0.1149,False
+Uptown,Cheesecake Slice,0.0941,0.5432,0.1477,False
+Uptown,Chicken Pesto Sandwich,0.094,0.5194,0.1532,False
+Uptown,Chicken Salad Bowl,0.0937,0.5464,0.1464,False
+Uptown,Chocolate Cookie,0.096,0.7119,0.1189,False
+Uptown,Chocolate Croissant,0.0931,0.6275,0.1293,False
+Uptown,Cinnamon Roll,0.0951,0.5648,0.1442,False
+Uptown,Classic Matcha,0.0937,0.6478,0.1264,True
+Uptown,Coffee Frappe,0.0938,0.6137,0.1326,False
+Uptown,Cold Brew,0.0951,0.7753,0.1093,False
+Uptown,Egg Sandwich,0.0946,0.6176,0.1329,False
+Uptown,English Breakfast Tea,0.0937,0.8338,0.101,False
+Uptown,Espresso,0.0945,0.7559,0.1111,False
+Uptown,Flat White,0.0933,0.7153,0.1154,False
+Uptown,Fresh Orange Juice,0.0942,0.6304,0.13,False
+Uptown,Frozen Yoghurt Cup,0.0949,0.5627,0.1443,False
+Uptown,Granola Yoghurt,0.0928,0.5769,0.1386,False
+Uptown,Halloumi Wrap,0.0942,0.5843,0.1389,False
+Uptown,Iced Americano,0.0919,0.7757,0.1059,False
+Uptown,Iced Latte,0.0934,0.6907,0.1191,True
+Uptown,Iced Matcha,0.0927,0.6337,0.1276,True
+Uptown,Iced Mocha,0.0933,0.6433,0.1267,False
+Uptown,Lemonade,0.0942,0.7489,0.1117,False
+Uptown,Mint Tea,0.0943,0.8286,0.1022,False
+Uptown,Peach Iced Tea,0.0937,0.7424,0.112,False
+Uptown,Pistachio Cookie,0.0937,0.6586,0.1245,False
+Uptown,Quinoa Bowl,0.0939,0.5778,0.1398,False
+Uptown,Soup of the Day,0.0948,0.6093,0.1346,False
+Uptown,Spanish Latte,0.0946,0.6673,0.1241,False
+Uptown,Sparkling Water,0.0947,0.5076,0.1572,False
+Uptown,Still Water,0.0963,0.6684,0.1259,False
+Uptown,Strawberry Matcha,0.094,0.5845,0.1386,False
+Uptown,Tiramisu Cup,0.0938,0.5644,0.1425,False
+Uptown,Tuna Sandwich,0.0929,0.5788,0.1384,False
+Uptown,Turkey & Cheese Sandwich,0.094,0.5108,0.1554,False
+Uptown,Vanilla Latte,0.0937,0.6845,0.1204,False

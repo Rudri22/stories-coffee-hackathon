@@ -118,7 +118,8 @@ def pricing_scenarios(df, sens):
     point = sens.set_index("reading").implied_elasticity
     cases = [("point estimate", point["measured unit lift (DiD)"]),
              ("most price-sensitive robustness spec", point["robustness: largest lift"]),
-             ("plausible bound (most price-sensitive)", point["plausible upper lift (test inversion, ~95%)"])]
+             ("plausible bound (most price-sensitive)", point["plausible upper lift (test inversion, ~95%)"]),
+             ("stress: elasticity -2.0 (not measured)", -2.0)]
     rows = []
     for b in ["Garden", "Uptown"]:
         s = df[df.branch == b]
@@ -140,6 +141,25 @@ def pricing_scenarios(df, sens):
     tot = out.groupby("case", sort=False)[["delta_gp_6m (estimate)", "delta_gp_annual_flat (estimate)"]].sum().reset_index()
     tot.insert(0, "branch", "Garden+Uptown")
     return pd.concat([out, tot], ignore_index=True).round(4)
+
+
+PILOT_PRODUCTS = ["Iced Latte", "Iced Matcha", "Butter Croissant", "Classic Matcha", "Cappuccino"]  # fixed before thresholds
+
+
+def pilot_thresholds(df):
+    """Per-product break-even unit drop for raising Garden/Uptown prices to Harbour's: d = 1 - m / (m + u), with m the
+    product's full-price unit margin at that branch and u its price rise. A branch-wide average can approve a product
+    that loses money, so the pilot uses each selected product's own threshold."""
+    t = df[df.discount == 0].groupby(["product", "branch"])[["price", "unit_cost"]].first().unstack("branch")
+    rows = []
+    for b in ["Garden", "Uptown"]:
+        m = 1 - t[("unit_cost", b)] / t[("price", b)]
+        up = t[("price", "Harbour")] / t[("price", b)] - 1
+        be = 1 - m / (m + up)
+        for prod in t.index:
+            rows.append({"branch": b, "product": prod, "price_rise": up[prod], "unit_margin": m[prod],
+                         "breakeven_unit_drop": be[prod], "in_pilot": prod in PILOT_PRODUCTS})
+    return pd.DataFrame(rows).round(4)
 
 
 def daypart_mix(df):
@@ -240,6 +260,10 @@ def main():
     print("--- equal-cost ranking\n" + rank.to_string(index=False))
     sens = price_sensitivity(); sens.to_csv(OUT / "f5_price_sensitivity.csv", index=False)
     scen = pricing_scenarios(df, sens); scen.to_csv(OUT / "f5_pricing_scenarios.csv", index=False)
+    pil = pilot_thresholds(df); pil.to_csv(OUT / "f5_pilot_thresholds.csv", index=False)
+    print("--- pilot thresholds (range by branch, then pilot products at Uptown)")
+    print(pil.groupby("branch").breakeven_unit_drop.agg(["min", "max"]).to_string())
+    print(pil[(pil.branch == "Uptown") & pil.in_pilot][["product", "unit_margin", "breakeven_unit_drop"]].to_string(index=False))
     dp = daypart_mix(df); dp.to_csv(OUT / "f5_daypart_mix.csv")
     hol, test = holiday_effects(df); hol.to_csv(OUT / "f5_holiday_effects.csv", index=False); test.to_csv(OUT / "f5_holiday_test.csv", index=False)
     ram = ramadan_profile(df); ram.to_csv(OUT / "f5_ramadan_profile.csv")

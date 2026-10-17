@@ -85,11 +85,17 @@ def main():
             if b - a >= 8:
                 return [all_days[a + k] for k in range(8)] + [all_days[b + k] for k in range(8)]
 
-    blocks = [random_blocks() for _ in range(1000)]
+    # Treat placebo campaigns exactly like the real ones: their own days are excluded from their matched days,
+    # and only complete evaluations (all 16 days with >= 3 matched days) are kept.
+    blocks = []
+    while len(blocks) < 1000:
+        blk = random_blocks()
+        if not did(d, t, blk, excluded | set(blk), "units", "promoted").did.isna().any():
+            blocks.append(blk)
     rows, details = [], []
     for seg, metric in [("promoted", "units"), ("promoted", "gp"), ("other", "units"), ("other", "gp"), (None, "txns")]:
         o = did(d, t, promo_days, excluded, metric, seg)
-        plac = np.array([did(d, t, blk, excluded, metric, seg).did.mean() for blk in blocks])
+        plac = np.array([did(d, t, blk, excluded | set(blk), metric, seg).did.mean() for blk in blocks])
         plac = plac[~np.isnan(plac)]
         label = f"{seg or 'all'} {metric}"
         rows.append({"segment_metric": label, "harbour_change_vs_matched": o.harbour_change.mean(),

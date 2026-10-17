@@ -60,8 +60,10 @@ def placebo_seeds(df, seeds=(0, 1, 2, 3, 4), n=1000):
         while len(pl) < n:
             a, b = sorted(rng.choice(starts, size=2, replace=False))
             if b - a >= 8:
-                pl.append(f2.did(d, t, [all_days[a + k] for k in range(8)] + [all_days[b + k] for k in range(8)],
-                                 excluded, "units", "promoted").did.mean())
+                blk = [all_days[a + k] for k in range(8)] + [all_days[b + k] for k in range(8)]
+                r = f2.did(d, t, blk, excluded | set(blk), "units", "promoted").did  # same exclusions as the real campaigns
+                if not r.isna().any():  # complete evaluations only
+                    pl.append(r.mean())
         pl = np.array(pl)
         rows.append({"seed": seed, "placebo_p2.5": np.percentile(pl, 2.5), "placebo_p97.5": np.percentile(pl, 97.5),
                      "placebo_p99": np.percentile(pl, 99), "gap_to_breakeven": gap, "share_placebos_reaching_gap": (pl >= gap).mean()})

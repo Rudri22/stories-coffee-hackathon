@@ -2,5 +2,5 @@ reading,unit_lift,implied_elasticity
 measured unit lift (DiD),0.0421,-0.2537
 robustness: smallest lift,-0.0009,0.0055
 robustness: largest lift,0.0886,-0.5221
-"plausible upper lift (test inversion, ~95%)",0.1734,-0.9839
-"plausible lower lift (test inversion, ~95%)",-0.1314,0.8668
+"plausible upper lift (test inversion, ~95%)",0.1836,-1.0372
+"plausible lower lift (test inversion, ~95%)",-0.154,1.029
